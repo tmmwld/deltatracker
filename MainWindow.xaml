@@ -1,0 +1,189 @@
+<Window x:Class="DeltaForceTracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        Title="Delta Force Balance Tracker"
+        Height="700"
+        Width="1000"
+        Background="{StaticResource DarkBackgroundBrush}"
+        WindowStartupLocation="CenterScreen">
+    
+    <Grid Margin="20">
+        <TabControl>
+            <TabItem Header="Dashboard">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Current Balance Card -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="CURRENT BALANCE" 
+                                         Style="{StaticResource LabelText}"/>
+                                <TextBlock x:Name="CurrentBalanceText"
+                                         Text="0.00M"
+                                         Style="{StaticResource ValueText}"/>
+                                <TextBlock x:Name="LastScanText"
+                                         Text="No scans yet"
+                                         Style="{StaticResource LabelText}"
+                                         Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Daily P&L Card -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="DAILY P&L" 
+                                         Style="{StaticResource LabelText}"/>
+                                <TextBlock x:Name="DailyPLText"
+                                         Text="+0.00M"
+                                         FontSize="36"
+                                         FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Status Card -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="STATUS" 
+                                         Style="{StaticResource LabelText}"/>
+                                <TextBlock x:Name="StatusText"
+                                         Text="Ready to scan"
+                                         Foreground="{StaticResource TextPrimaryBrush}"
+                                         FontSize="16"
+                                         FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Actions -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="ACTIONS" 
+                                         Style="{StaticResource LabelText}"/>
+                                <Button x:Name="ScanButton"
+                                      Content="Scan Now (F8)"
+                                      Style="{StaticResource ModernButton}"
+                                      Margin="0,10,0,10"
+                                      Click="ScanButton_Click"/>
+                                <Button x:Name="SelectRegionButton"
+                                      Content="Select OCR Region"
+                                      Style="{StaticResource ModernButton}"
+                                      Margin="0,0,0,10"
+                                      Click="SelectRegionButton_Click"/>
+                                <Button x:Name="ChangeHotkeyButton"
+                                      Content="Change Hotkey"
+                                      Style="{StaticResource ModernButton}"
+                                      Click="ChangeHotkeyButton_Click"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Analytics">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Chart -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="BALANCE HISTORY" 
+                                         Style="{StaticResource LabelText}"/>
+                                <lvc:CartesianChart x:Name="BalanceChart"
+                                                   Height="300"
+                                                   Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Statistics Grid -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Best Day -->
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,7.5,15">
+                                <StackPanel>
+                                    <TextBlock Text="BEST DAY" 
+                                             Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="BestDayText"
+                                             Text="+0.00M"
+                                             Foreground="{StaticResource SuccessBrush}"
+                                             FontSize="24"
+                                             FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Worst Day -->
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="7.5,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="WORST DAY" 
+                                             Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="WorstDayText"
+                                             Text="-0.00M"
+                                             Foreground="{StaticResource ErrorBrush}"
+                                             FontSize="24"
+                                             FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Highest Balance -->
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,7.5,15">
+                                <StackPanel>
+                                    <TextBlock Text="HIGHEST BALANCE" 
+                                             Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="HighestBalanceText"
+                                             Text="0.00M"
+                                             Foreground="{StaticResource TextPrimaryBrush}"
+                                             FontSize="24"
+                                             FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Scans -->
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="7.5,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="TOTAL SCANS" 
+                                             Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="TotalScansText"
+                                             Text="0"
+                                             Foreground="{StaticResource TextPrimaryBrush}"
+                                             FontSize="24"
+                                             FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- History Table -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="SCAN HISTORY" 
+                                         Style="{StaticResource LabelText}"/>
+                                <DataGrid x:Name="HistoryDataGrid"
+                                        MaxHeight="300"
+                                        Margin="0,10,0,0">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Time" 
+                                                          Binding="{Binding Timestamp, StringFormat='yyyy-MM-dd HH:mm:ss'}"
+                                                          Width="*"/>
+                                        <DataGridTextColumn Header="Raw Value" 
+                                                          Binding="{Binding RawValue}"
+                                                          Width="*"/>
+                                        <DataGridTextColumn Header="Numeric Value" 
+                                                          Binding="{Binding NumericValue, StringFormat='N2'}"
+                                                          Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
