@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>DeltaForceTracker</AssemblyName>
     <RootNamespace>DeltaForceTracker</RootNamespace>
     <Version>1.0.0</Version>
