@@ -13,10 +13,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.0.x'
 
@@ -43,14 +43,20 @@ jobs:
 
     - name: Copy Tesseract Data
       run: |
-        Copy-Item -Path "tessdata" -Destination "./publish/tessdata" -Recurse
+        if (Test-Path "tessdata") {
+            Copy-Item -Path "tessdata" -Destination "./publish/tessdata" -Recurse -Force
+        } else {
+            Write-Error "tessdata directory not found!"
+        }
       shell: pwsh
 
     - name: Create Release Folder
       run: |
-        mkdir release
-        Copy-Item -Path "./publish/*" -Destination "./release/" -Recurse
-        Copy-Item -Path "README.md" -Destination "./release/" -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Force -Path release
+        Copy-Item -Path "./publish/*" -Destination "./release/" -Recurse -Force
+        if (Test-Path "README.md") {
+            Copy-Item -Path "README.md" -Destination "./release/" -Force
+        }
       shell: pwsh
 
     - name: Upload Artifact
@@ -62,7 +68,7 @@ jobs:
 
     - name: Create Release (on tag)
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           release/DeltaForceTracker.exe

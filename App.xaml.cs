@@ -26,5 +26,39 @@ namespace DeltaForceTracker
                 args.Handled = true;
             };
         }
+
+        public void ChangeLanguage(string cultureCode)
+        {
+            var dict = new ResourceDictionary();
+            switch (cultureCode)
+            {
+                case "ru":
+                    dict.Source = new System.Uri("Resources/Languages/Strings.ru.xaml", System.UriKind.Relative);
+                    break;
+                case "en":
+                default:
+                    dict.Source = new System.Uri("Resources/Languages/Strings.en.xaml", System.UriKind.Relative);
+                    break;
+            }
+
+            // Find and remove the old language dictionary
+            var oldDict = Resources.MergedDictionaries.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Strings."));
+            if (oldDict != null)
+            {
+                Resources.MergedDictionaries.Remove(oldDict);
+            }
+
+            // Add the new one
+            Resources.MergedDictionaries.Add(dict);
+        }
+
+        public string GetString(string key)
+        {
+            if (Resources.Contains(key))
+            {
+                return Resources[key] as string ?? key;
+            }
+            return key;
+        }
     }
 }
