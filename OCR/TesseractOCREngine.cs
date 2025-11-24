@@ -45,7 +45,8 @@ namespace DeltaForceTracker.OCR
 
             try
             {
-                using var page = _engine.Process(screenshot);
+                using var pix = PixConverter.ToPix(screenshot);
+                using var page = _engine.Process(pix);
                 var text = page.GetText();
 
                 // Find the balance label and extract value

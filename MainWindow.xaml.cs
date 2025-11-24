@@ -13,10 +13,12 @@ using DeltaForceTracker.OCR;
 using DeltaForceTracker.Utils;
 using DeltaForceTracker.Views;
 using LiveChartsCore;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using Newtonsoft.Json;
+
 
 namespace DeltaForceTracker
 {
