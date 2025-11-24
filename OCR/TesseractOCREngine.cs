@@ -50,7 +50,7 @@ namespace DeltaForceTracker.OCR
                 byte[] imageBytes;
                 using (var ms = new MemoryStream())
                 {
-                    screenshot.Save(ms, ImageFormat.Png);
+                    screenshot.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                     imageBytes = ms.ToArray();
                 }
 
