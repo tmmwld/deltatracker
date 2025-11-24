@@ -312,5 +312,36 @@ namespace DeltaForceTracker.Database
 
             return settings;
         }
+        public void ClearAllData()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                var command = connection.CreateCommand();
+                command.Transaction = transaction;
+                
+                // Clear scans table
+                command.CommandText = "DELETE FROM Scans";
+                command.ExecuteNonQuery();
+
+                // Reset sequence for Scans table
+                command.CommandText = "DELETE FROM sqlite_sequence WHERE name='Scans'";
+                command.ExecuteNonQuery();
+
+                // Optionally clear settings or keep them? 
+                // User asked to "clear analytics", usually implies keeping settings like Hotkey/Region.
+                // I will keep settings for now as it's more convenient.
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
     }
 }

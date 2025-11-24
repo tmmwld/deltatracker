@@ -71,7 +71,13 @@
                                 <Button x:Name="ChangeHotkeyButton"
                                       Content="Change Hotkey"
                                       Style="{StaticResource ModernButton}"
+                                      Margin="0,0,0,10"
                                       Click="ChangeHotkeyButton_Click"/>
+                                <Button x:Name="ResetDataButton"
+                                      Content="Reset Analytics"
+                                      Style="{StaticResource ModernButton}"
+                                      Background="{StaticResource ErrorBrush}"
+                                      Click="ResetDataButton_Click"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

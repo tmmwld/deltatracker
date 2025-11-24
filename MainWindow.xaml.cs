@@ -123,21 +123,22 @@ namespace DeltaForceTracker
 
         private void PerformScan()
         {
+            if (!_scanRegion.HasValue)
+            {
+                System.Windows.MessageBox.Show(
+                    "Please select a scan region first using the 'Select OCR Region' button.",
+                    "No Region Selected",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+                return;
+            }
+
             UpdateStatus("Scanning...");
 
             try
             {
-                Bitmap screenshot;
-                
-                if (_scanRegion.HasValue)
-                {
-                    screenshot = ScreenCapture.CaptureRegion(_scanRegion.Value);
-                }
-                else
-                {
-                    // Use full screen if no region selected
-                    screenshot = ScreenCapture.CaptureFullScreen();
-                }
+                Bitmap screenshot = ScreenCapture.CaptureRegion(_scanRegion.Value);
 
                 var result = _ocrEngine.ExtractBalanceFromRegion(screenshot);
                 screenshot.Dispose();
@@ -305,6 +306,36 @@ namespace DeltaForceTracker
         private void UpdateStatus(string message)
         {
             StatusText.Text = message;
+        }
+        private void ResetDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = System.Windows.MessageBox.Show(
+                "Are you sure you want to delete ALL analytics data? This cannot be undone.\n\nSettings (hotkey, region) will be preserved.",
+                "Confirm Reset",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
+                MessageBoxResult.No
+            );
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _dbManager.ClearAllData();
+                    RefreshDashboard();
+                    RefreshAnalytics();
+                    UpdateStatus("All data has been reset.");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(
+                        $"Failed to reset data: {ex.Message}",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            }
         }
     }
 }

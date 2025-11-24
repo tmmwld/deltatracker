@@ -10,6 +10,7 @@
         AllowsTransparency="True">
     
     <Canvas x:Name="Canvas"
+            Background="Transparent"
             MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
             MouseMove="Canvas_MouseMove"
             MouseLeftButtonUp="Canvas_MouseLeftButtonUp">
@@ -28,6 +29,7 @@
                   Canvas.Left="50"
                   Canvas.Top="50"
                   Background="#D0000000"
-                  Padding="20"/>
+                  Padding="20"
+                  IsHitTestVisible="False"/>
     </Canvas>
 </Window>
