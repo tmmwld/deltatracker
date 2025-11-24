@@ -1,0 +1,47 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- General -->
+    <s:String x:Key="Lang.Title">Delta Force Balance Tracker</s:String>
+    <s:String x:Key="Lang.Dashboard">Dashboard</s:String>
+    <s:String x:Key="Lang.Analytics">Analytics</s:String>
+    
+    <!-- Dashboard Cards -->
+    <s:String x:Key="Lang.CurrentBalance">CURRENT BALANCE</s:String>
+    <s:String x:Key="Lang.DailyPL">DAILY P&amp;L</s:String>
+    <s:String x:Key="Lang.Status">STATUS</s:String>
+    <s:String x:Key="Lang.Actions">ACTIONS</s:String>
+    
+    <!-- Actions -->
+    <s:String x:Key="Lang.ScanNow">Scan Now (F8)</s:String>
+    <s:String x:Key="Lang.SelectRegion">Select OCR Region</s:String>
+    <s:String x:Key="Lang.ChangeHotkey">Change Hotkey</s:String>
+    <s:String x:Key="Lang.ResetAnalytics">Reset Analytics</s:String>
+    
+    <!-- Analytics Cards -->
+    <s:String x:Key="Lang.BalanceHistory">BALANCE HISTORY</s:String>
+    <s:String x:Key="Lang.BestDay">BEST DAY</s:String>
+    <s:String x:Key="Lang.WorstDay">WORST DAY</s:String>
+    <s:String x:Key="Lang.HighestBalance">HIGHEST BALANCE</s:String>
+    <s:String x:Key="Lang.TotalScans">TOTAL SCANS</s:String>
+    <s:String x:Key="Lang.ScanHistory">SCAN HISTORY</s:String>
+    
+    <!-- DataGrid Headers -->
+    <s:String x:Key="Lang.Time">Time</s:String>
+    <s:String x:Key="Lang.RawValue">Raw Value</s:String>
+    <s:String x:Key="Lang.NumericValue">Numeric Value</s:String>
+    
+    <!-- Status Messages -->
+    <s:String x:Key="Lang.Status.Ready">Ready to scan</s:String>
+    <s:String x:Key="Lang.Status.Scanning">Scanning...</s:String>
+    <s:String x:Key="Lang.Status.NoScans">No scans yet</s:String>
+    
+    <!-- Dialogs & Errors -->
+    <s:String x:Key="Lang.Error.NoRegion">Please select a scan region first using the 'Select OCR Region' button.</s:String>
+    <s:String x:Key="Lang.Error.Title">Error</s:String>
+    <s:String x:Key="Lang.Confirm.Reset">Are you sure you want to delete ALL analytics data? This cannot be undone.\n\nSettings (hotkey, region) will be preserved.</s:String>
+    <s:String x:Key="Lang.Confirm.Title">Confirm Reset</s:String>
+    <s:String x:Key="Lang.Success.Reset">All data has been reset.</s:String>
+    
+</ResourceDictionary>

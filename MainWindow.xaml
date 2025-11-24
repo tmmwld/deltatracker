@@ -2,165 +2,163 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
-        Title="Delta Force Balance Tracker"
-        Height="700"
-        Width="1000"
+        Title="{DynamicResource Lang.Title}"
+        Height="720"
+        Width="1080"
         Background="{StaticResource DarkBackgroundBrush}"
-        WindowStartupLocation="CenterScreen">
-    
-    <Grid Margin="20">
-        <TabControl>
-            <TabItem Header="Dashboard">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <!-- Current Balance Card -->
-                        <Border Style="{StaticResource Card}">
-                            <StackPanel>
-                                <TextBlock Text="CURRENT BALANCE" 
-                                         Style="{StaticResource LabelText}"/>
-                                <TextBlock x:Name="CurrentBalanceText"
-                                         Text="0.00M"
-                                         Style="{StaticResource ValueText}"/>
-                                <TextBlock x:Name="LastScanText"
-                                         Text="No scans yet"
-                                         Style="{StaticResource LabelText}"
-                                         Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource MainFont}">
 
-                        <!-- Daily P&amp;L Card -->
-                        <Border Style="{StaticResource Card}">
-                            <StackPanel>
-                                <TextBlock Text="DAILY P&amp;L" 
-                                         Style="{StaticResource LabelText}"/>
-                                <TextBlock x:Name="DailyPLText"
-                                         Text="+0.00M"
-                                         FontSize="36"
-                                         FontWeight="Bold"/>
-                            </StackPanel>
-                        </Border>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40" GlassFrameThickness="0" ResizeBorderThickness="4"/>
+    </WindowChrome.WindowChrome>
 
-                        <!-- Status Card -->
-                        <Border Style="{StaticResource Card}">
-                            <StackPanel>
-                                <TextBlock Text="STATUS" 
-                                         Style="{StaticResource LabelText}"/>
-                                <TextBlock x:Name="StatusText"
-                                         Text="Ready to scan"
-                                         Foreground="{StaticResource TextPrimaryBrush}"
-                                         FontSize="16"
-                                         FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Border>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Title Bar -->
+            <RowDefinition Height="*"/>    <!-- Content -->
+        </Grid.RowDefinitions>
 
-                        <!-- Actions -->
-                        <Border Style="{StaticResource Card}">
-                            <StackPanel>
-                                <TextBlock Text="ACTIONS" 
-                                         Style="{StaticResource LabelText}"/>
-                                <Button x:Name="ScanButton"
-                                      Content="Scan Now (F8)"
-                                      Style="{StaticResource ModernButton}"
-                                      Margin="0,10,0,10"
-                                      Click="ScanButton_Click"/>
-                                <Button x:Name="SelectRegionButton"
-                                      Content="Select OCR Region"
-                                      Style="{StaticResource ModernButton}"
-                                      Margin="0,0,0,10"
-                                      Click="SelectRegionButton_Click"/>
-                                <Button x:Name="ChangeHotkeyButton"
-                                      Content="Change Hotkey"
-                                      Style="{StaticResource ModernButton}"
-                                      Margin="0,0,0,10"
-                                      Click="ChangeHotkeyButton_Click"/>
-                                <Button x:Name="ResetDataButton"
-                                      Content="Reset Analytics"
-                                      Style="{StaticResource ModernButton}"
-                                      Background="{StaticResource ErrorBrush}"
-                                      Click="ResetDataButton_Click"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Background="{StaticResource MediumBackgroundBrush}" Padding="15,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <TabItem Header="Analytics">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <!-- Chart -->
-                        <Border Style="{StaticResource Card}">
-                            <StackPanel>
-                                <TextBlock Text="BALANCE HISTORY" 
-                                         Style="{StaticResource LabelText}"/>
-                                <lvc:CartesianChart x:Name="BalanceChart"
-                                                   Height="300"
-                                                   Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
+                <!-- Title -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="DELTA FORCE" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" FontSize="16" Margin="0,0,5,0"/>
+                    <TextBlock Text="TRACKER" FontWeight="Light" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16"/>
+                </StackPanel>
 
-                        <!-- Statistics Grid -->
-                        <Grid>
+                <!-- Language Switcher & Controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <ComboBox x:Name="LanguageSelector" 
+                              Width="60" 
+                              Margin="0,0,15,0"
+                              SelectionChanged="LanguageSelector_SelectionChanged"
+                              Background="Transparent"
+                              BorderBrush="{StaticResource TextSecondaryBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}">
+                        <ComboBoxItem Content="EN" Tag="en" IsSelected="True"/>
+                        <ComboBoxItem Content="RU" Tag="ru"/>
+                    </ComboBox>
+                    
+                    <!-- Simple Window Controls (Optional, system ones still work if CaptionHeight > 0) -->
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <TabControl Grid.Row="1" Margin="20">
+            <TabItem Header="{DynamicResource Lang.Dashboard}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+                    <StackPanel Margin="0,10,0,0">
+                        <!-- Top Stats Row -->
+                        <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1.5*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Best Day -->
-                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,7.5,15">
+                            <!-- Current Balance (Big Card) -->
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
                                 <StackPanel>
-                                    <TextBlock Text="BEST DAY" 
-                                             Style="{StaticResource LabelText}"/>
-                                    <TextBlock x:Name="BestDayText"
-                                             Text="+0.00M"
-                                             Foreground="{StaticResource SuccessBrush}"
-                                             FontSize="24"
-                                             FontWeight="Bold"/>
+                                    <TextBlock Text="{DynamicResource Lang.CurrentBalance}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="CurrentBalanceText" Text="0.00M" Style="{StaticResource ValueText}" Foreground="{StaticResource AccentBrush}"/>
+                                    <TextBlock x:Name="LastScanText" Text="{DynamicResource Lang.Status.NoScans}" Style="{StaticResource LabelText}" Margin="0,5,0,0" Opacity="0.7"/>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Worst Day -->
-                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="7.5,0,0,15">
-                                <StackPanel>
-                                    <TextBlock Text="WORST DAY" 
-                                             Style="{StaticResource LabelText}"/>
-                                    <TextBlock x:Name="WorstDayText"
-                                             Text="-0.00M"
-                                             Foreground="{StaticResource ErrorBrush}"
-                                             FontSize="24"
-                                             FontWeight="Bold"/>
+                            <!-- Daily P&L -->
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource Lang.DailyPL}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="DailyPLText" Text="+0.00M" FontSize="42" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
 
+                        <!-- Status & Actions Row -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Highest Balance -->
-                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,7.5,15">
+                            <!-- Status -->
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
                                 <StackPanel>
-                                    <TextBlock Text="HIGHEST BALANCE" 
-                                             Style="{StaticResource LabelText}"/>
-                                    <TextBlock x:Name="HighestBalanceText"
-                                             Text="0.00M"
-                                             Foreground="{StaticResource TextPrimaryBrush}"
-                                             FontSize="24"
-                                             FontWeight="Bold"/>
+                                    <TextBlock Text="{DynamicResource Lang.Status}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="StatusText" Text="{DynamicResource Lang.Status.Ready}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="18" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Total Scans -->
-                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="7.5,0,0,15">
+                            <!-- Actions -->
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
                                 <StackPanel>
-                                    <TextBlock Text="TOTAL SCANS" 
-                                             Style="{StaticResource LabelText}"/>
-                                    <TextBlock x:Name="TotalScansText"
-                                             Text="0"
-                                             Foreground="{StaticResource TextPrimaryBrush}"
-                                             FontSize="24"
-                                             FontWeight="Bold"/>
+                                    <TextBlock Text="{DynamicResource Lang.Actions}" Style="{StaticResource LabelText}"/>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button x:Name="ScanButton" Content="{DynamicResource Lang.ScanNow}" Style="{StaticResource ModernButton}" Margin="0,0,10,10" Click="ScanButton_Click"/>
+                                        <Button x:Name="SelectRegionButton" Content="{DynamicResource Lang.SelectRegion}" Style="{StaticResource ModernButton}" Margin="0,0,10,10" Click="SelectRegionButton_Click"/>
+                                        <Button x:Name="ChangeHotkeyButton" Content="{DynamicResource Lang.ChangeHotkey}" Style="{StaticResource ModernButton}" Margin="0,0,10,10" Click="ChangeHotkeyButton_Click"/>
+                                        <Button x:Name="ResetDataButton" Content="{DynamicResource Lang.ResetAnalytics}" Style="{StaticResource DangerButton}" Margin="0,0,0,10" Click="ResetDataButton_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Lang.Analytics}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,10,0,0">
+                        <!-- Chart -->
+                        <Border Style="{StaticResource Card}" Height="350">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Lang.BalanceHistory}" Style="{StaticResource LabelText}"/>
+                                <lvc:CartesianChart x:Name="BalanceChart" Height="280" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Stats Grid -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.BestDay}" Style="{StaticResource LabelText}" FontSize="11"/>
+                                    <TextBlock x:Name="BestDayText" Text="+0.00M" Foreground="{StaticResource SuccessBrush}" FontSize="20" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="5,0,5,0" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.WorstDay}" Style="{StaticResource LabelText}" FontSize="11"/>
+                                    <TextBlock x:Name="WorstDayText" Text="-0.00M" Foreground="{StaticResource ErrorBrush}" FontSize="20" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="2" Margin="5,0,5,0" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.HighestBalance}" Style="{StaticResource LabelText}" FontSize="11"/>
+                                    <TextBlock x:Name="HighestBalanceText" Text="0.00M" Foreground="{StaticResource TextPrimaryBrush}" FontSize="20" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="3" Margin="10,0,0,0" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.TotalScans}" Style="{StaticResource LabelText}" FontSize="11"/>
+                                    <TextBlock x:Name="TotalScansText" Text="0" Foreground="{StaticResource TextPrimaryBrush}" FontSize="20" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -168,21 +166,12 @@
                         <!-- History Table -->
                         <Border Style="{StaticResource Card}">
                             <StackPanel>
-                                <TextBlock Text="SCAN HISTORY" 
-                                         Style="{StaticResource LabelText}"/>
-                                <DataGrid x:Name="HistoryDataGrid"
-                                        MaxHeight="300"
-                                        Margin="0,10,0,0">
+                                <TextBlock Text="{DynamicResource Lang.ScanHistory}" Style="{StaticResource LabelText}"/>
+                                <DataGrid x:Name="HistoryDataGrid" MaxHeight="400" Margin="0,10,0,0">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Time" 
-                                                          Binding="{Binding Timestamp, StringFormat='yyyy-MM-dd HH:mm:ss'}"
-                                                          Width="*"/>
-                                        <DataGridTextColumn Header="Raw Value" 
-                                                          Binding="{Binding RawValue}"
-                                                          Width="*"/>
-                                        <DataGridTextColumn Header="Numeric Value" 
-                                                          Binding="{Binding NumericValue, StringFormat='N2'}"
-                                                          Width="*"/>
+                                        <DataGridTextColumn Header="{DynamicResource Lang.Time}" Binding="{Binding Timestamp, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="*"/>
+                                        <DataGridTextColumn Header="{DynamicResource Lang.RawValue}" Binding="{Binding RawValue}" Width="*"/>
+                                        <DataGridTextColumn Header="{DynamicResource Lang.NumericValue}" Binding="{Binding NumericValue, StringFormat='N2'}" Width="*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>

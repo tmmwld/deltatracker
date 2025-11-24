@@ -1,0 +1,47 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- General -->
+    <s:String x:Key="Lang.Title">Delta Force Трекер Баланса</s:String>
+    <s:String x:Key="Lang.Dashboard">Дашборд</s:String>
+    <s:String x:Key="Lang.Analytics">Аналитика</s:String>
+    
+    <!-- Dashboard Cards -->
+    <s:String x:Key="Lang.CurrentBalance">ТЕКУЩИЙ БАЛАНС</s:String>
+    <s:String x:Key="Lang.DailyPL">ДНЕВНОЙ P&amp;L</s:String>
+    <s:String x:Key="Lang.Status">СТАТУС</s:String>
+    <s:String x:Key="Lang.Actions">ДЕЙСТВИЯ</s:String>
+    
+    <!-- Actions -->
+    <s:String x:Key="Lang.ScanNow">Сканировать (F8)</s:String>
+    <s:String x:Key="Lang.SelectRegion">Выбрать область OCR</s:String>
+    <s:String x:Key="Lang.ChangeHotkey">Изменить хоткей</s:String>
+    <s:String x:Key="Lang.ResetAnalytics">Сбросить аналитику</s:String>
+    
+    <!-- Analytics Cards -->
+    <s:String x:Key="Lang.BalanceHistory">ИСТОРИЯ БАЛАНСА</s:String>
+    <s:String x:Key="Lang.BestDay">ЛУЧШИЙ ДЕНЬ</s:String>
+    <s:String x:Key="Lang.WorstDay">ХУДШИЙ ДЕНЬ</s:String>
+    <s:String x:Key="Lang.HighestBalance">МАКС. БАЛАНС</s:String>
+    <s:String x:Key="Lang.TotalScans">ВСЕГО СКАНОВ</s:String>
+    <s:String x:Key="Lang.ScanHistory">ИСТОРИЯ СКАНОВ</s:String>
+    
+    <!-- DataGrid Headers -->
+    <s:String x:Key="Lang.Time">Время</s:String>
+    <s:String x:Key="Lang.RawValue">Сырое значение</s:String>
+    <s:String x:Key="Lang.NumericValue">Числовое значение</s:String>
+    
+    <!-- Status Messages -->
+    <s:String x:Key="Lang.Status.Ready">Готов к сканированию</s:String>
+    <s:String x:Key="Lang.Status.Scanning">Сканирование...</s:String>
+    <s:String x:Key="Lang.Status.NoScans">Нет данных</s:String>
+    
+    <!-- Dialogs & Errors -->
+    <s:String x:Key="Lang.Error.NoRegion">Пожалуйста, сначала выберите область сканирования (кнопка 'Выбрать область OCR').</s:String>
+    <s:String x:Key="Lang.Error.Title">Ошибка</s:String>
+    <s:String x:Key="Lang.Confirm.Reset">Вы уверены, что хотите удалить ВСЮ аналитику? Это действие нельзя отменить.\n\nНастройки (хоткей, область) будут сохранены.</s:String>
+    <s:String x:Key="Lang.Confirm.Title">Подтверждение сброса</s:String>
+    <s:String x:Key="Lang.Success.Reset">Все данные сброшены.</s:String>
+    
+</ResourceDictionary>
