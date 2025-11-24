@@ -12,13 +12,13 @@ namespace DeltaForceTracker.Utils
                 throw new ArgumentException("Input cannot be empty");
 
             // Normalize the input
-            input = input.Trim().ToUpperInvariant();
-            
-            // Replace Russian comma with period
-            input = input.Replace(',', '.');
+            // 1. Remove spaces (e.g. "142 5 k" -> "1425k")
+            // 2. Replace comma with dot
+            // 3. ToUpper
+            input = input.Replace(" ", "").Replace(',', '.').ToUpperInvariant();
             
             // Extract number and suffix
-            var match = Regex.Match(input, @"([\d.]+)\s*([KMКМкм])?");
+            var match = Regex.Match(input, @"([\d.]+)([KMКМкм])?");
             
             if (!match.Success)
                 throw new FormatException($"Cannot parse balance: {input}");
@@ -37,6 +37,17 @@ namespace DeltaForceTracker.Utils
                 "" => 1m,
                 _ => throw new FormatException($"Unknown suffix: {suffixPart}")
             };
+
+            // Heuristic: If suffix is K and value >= 1000, it's likely a missing decimal point.
+            // Game typically switches to M at 1000K.
+            // Example: "1425K" (OCR error for 142.5K) -> 142.5K
+            if (multiplier == 1_000m && baseValue >= 1_000m)
+            {
+                while (baseValue >= 1_000m)
+                {
+                    baseValue /= 10m;
+                }
+            }
 
             return baseValue * multiplier;
         }
