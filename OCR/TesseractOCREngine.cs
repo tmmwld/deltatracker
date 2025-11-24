@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using DeltaForceTracker.Utils;
@@ -45,7 +46,16 @@ namespace DeltaForceTracker.OCR
 
             try
             {
-                using var pix = PixConverter.ToPix(screenshot);
+                // Convert Bitmap to byte array (PNG format)
+                byte[] imageBytes;
+                using (var ms = new MemoryStream())
+                {
+                    screenshot.Save(ms, ImageFormat.Png);
+                    imageBytes = ms.ToArray();
+                }
+
+                // Load Pix from byte array
+                using var pix = Pix.LoadFromMemory(imageBytes);
                 using var page = _engine.Process(pix);
                 var text = page.GetText();
 
