@@ -36,9 +36,6 @@ jobs:
     - name: Publish
       run: |
         dotnet publish -c Release -r win-x64 --self-contained true `
-          -p:PublishSingleFile=true `
-          -p:IncludeNativeLibrariesForSelfExtract=true `
-          -p:EnableCompressionInSingleFile=true `
           -p:DebugType=None `
           -p:DebugSymbols=false `
           -o ./publish
@@ -52,8 +49,7 @@ jobs:
     - name: Create Release Folder
       run: |
         mkdir release
-        Copy-Item -Path "./publish/DeltaForceTracker.exe" -Destination "./release/"
-        Copy-Item -Path "./publish/tessdata" -Destination "./release/tessdata" -Recurse
+        Copy-Item -Path "./publish/*" -Destination "./release/" -Recurse
         Copy-Item -Path "README.md" -Destination "./release/" -ErrorAction SilentlyContinue
       shell: pwsh
 
