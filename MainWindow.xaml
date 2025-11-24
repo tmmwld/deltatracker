@@ -28,10 +28,10 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Daily P&L Card -->
+                        <!-- Daily P&amp;L Card -->
                         <Border Style="{StaticResource Card}">
                             <StackPanel>
-                                <TextBlock Text="DAILY P&L" 
+                                <TextBlock Text="DAILY P&amp;L" 
                                          Style="{StaticResource LabelText}"/>
                                 <TextBlock x:Name="DailyPLText"
                                          Text="+0.00M"
