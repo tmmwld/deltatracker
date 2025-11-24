@@ -5,6 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>DeltaForceTracker</AssemblyName>
     <RootNamespace>DeltaForceTracker</RootNamespace>
@@ -23,9 +24,6 @@
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Reference Windows Forms for screen capture and hotkeys -->
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
+
 
 </Project>
