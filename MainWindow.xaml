@@ -28,8 +28,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Title -->
+                <!-- Title with Tactical Accent -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="3" Height="20" Background="{StaticResource AccentBrush}" Margin="0,0,10,0" CornerRadius="1.5"/>
                     <TextBlock Text="DELTA FORCE" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" FontSize="16" Margin="0,0,5,0"/>
                     <TextBlock Text="TRACKER" FontWeight="Light" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16"/>
                 </StackPanel>
@@ -37,12 +38,10 @@
                 <!-- Language Switcher & Controls -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
                     <ComboBox x:Name="LanguageSelector" 
-                              Width="60" 
+                              Style="{StaticResource TacticalComboBox}"
+                              Width="70" 
                               Margin="0,0,15,0"
-                              SelectionChanged="LanguageSelector_SelectionChanged"
-                              Background="Transparent"
-                              BorderBrush="{StaticResource TextSecondaryBrush}"
-                              Foreground="{StaticResource TextPrimaryBrush}">
+                              SelectionChanged="LanguageSelector_SelectionChanged">
                         <ComboBoxItem Content="EN" Tag="en" IsSelected="True"/>
                         <ComboBoxItem Content="RU" Tag="ru"/>
                     </ComboBox>
