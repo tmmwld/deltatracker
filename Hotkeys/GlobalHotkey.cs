@@ -14,6 +14,7 @@ namespace DeltaForceTracker.Hotkeys
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         private const int WM_HOTKEY = 0x0312;
+        private const uint MOD_NOREPEAT = 0x4000; // Prevents auto-repeat on Windows 7+
         private readonly int _hotkeyId;
         private IntPtr _windowHandle;
         private HwndSource? _source;
@@ -43,7 +44,8 @@ namespace DeltaForceTracker.Hotkeys
 
             _source.AddHook(WndProc);
 
-            uint modifiers = (uint)CurrentModifiers;
+            // Combine user modifiers with MOD_NOREPEAT for reliable global hotkey
+            uint modifiers = (uint)CurrentModifiers | MOD_NOREPEAT;
             uint vk = (uint)CurrentKey;
 
             _isRegistered = RegisterHotKey(_windowHandle, _hotkeyId, modifiers, vk);

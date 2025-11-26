@@ -27,6 +27,15 @@ jobs:
         curl -L https://github.com/tesseract-ocr/tessdata/raw/main/rus.traineddata -o tessdata/rus.traineddata
       shell: pwsh
 
+    - name: Extract Version
+      id: version
+      run: |
+        [xml]$csproj = Get-Content "DeltaForceTracker.csproj"
+        $version = $csproj.Project.PropertyGroup.Version
+        echo "APP_VERSION=$version" >> $env:GITHUB_ENV
+        Write-Host "Extracted version: $version"
+      shell: pwsh
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -62,7 +71,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: DeltaForceTracker-Windows
+        name: DeltaForceTracker-v${{ env.APP_VERSION }}-Windows
         path: release/
         retention-days: 30
 
