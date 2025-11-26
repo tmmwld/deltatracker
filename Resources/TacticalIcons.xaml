@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Window Control Icons -->
+    <PathGeometry x:Key="MinimizeIcon" Figures="M 0,6 L 10,6"/>
+    <PathGeometry x:Key="MaximizeIcon" Figures="M 0,0 L 10,0 L 10,10 L 0,10 Z"/>
+    <PathGeometry x:Key="CloseIcon" Figures="M 0,0 L 10,10 M 10,0 L 0,10"/>
+
+    <!-- Tactical Corner Brackets -->
+    <PathGeometry x:Key="CornerBracketTopLeft" Figures="M 0,15 L 0,0 L 15,0"/>
+    <PathGeometry x:Key="CornerBracketTopRight" Figures="M 0,0 L 15,0 L 15,15"/>
+    <PathGeometry x:Key="CornerBracketBottomLeft" Figures="M 0,0 L 0,15 L 15,15"/>
+    <PathGeometry x:Key="CornerBracketBottomRight" Figures="M 15,0 L 15,15 L 0,15"/>
+
+    <!-- Scan Icon (Crosshair) -->
+    <PathGeometry x:Key="ScanIcon" Figures="M 5,0 L 5,4 M 5,6 L 5,10 M 0,5 L 4,5 M 6,5 L 10,5"/>
+
+    <!-- Status Indicator -->
+    <EllipseGeometry x:Key="StatusDot" Center="5,5" RadiusX="5" RadiusY="5"/>
+
+</ResourceDictionary>

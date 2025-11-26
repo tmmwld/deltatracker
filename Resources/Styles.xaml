@@ -100,6 +100,53 @@
         </Setter>
     </Style>
 
+    <!-- Tactical Corner Brackets Style -->
+    <Style x:Key="TacticalCornerBrackets" TargetType="Grid">
+        <Setter Property="ClipToBounds" Value="False"/>
+    </Style>
+
+    <!-- Corner Bracket Template -->
+    <ControlTemplate x:Key="CornerBracket" TargetType="ContentControl">
+        <Canvas Width="20" Height="20">
+            <Path x:Name="BracketPath" 
+                  Stroke="{StaticResource AccentBrush}" 
+                  StrokeThickness="2" 
+                  Opacity="0.6"
+                  Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+        </Canvas>
+        <ControlTemplate.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                        <DoubleAnimation Storyboard.TargetName="BracketPath"
+                                       Storyboard.TargetProperty="Opacity"
+                                       From="0.4" To="1.0" Duration="0:0:2"
+                                       AutoReverse="True"
+                                       EasingFunction="{StaticResource {x:Static Storyboard.SineEaseProperty}}"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Glowing Border Style for Premium Cards -->
+    <Style x:Key="GlowingBorder" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                        <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                      From="#00F0FF" To="#38BDF8" Duration="0:0:3"
+                                      AutoReverse="True"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- Card Style: Enhanced Glassmorphism -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background">
@@ -144,6 +191,8 @@
         <Setter Property="FontSize" Value="56"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect Color="{StaticResource AccentColor}" BlurRadius="15" ShadowDepth="0" Opacity="0.3"/>

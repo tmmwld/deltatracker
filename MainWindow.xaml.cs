@@ -40,6 +40,12 @@ namespace DeltaForceTracker
             Closing += MainWindow_Closing;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Premium entrance animations for dashboard cards
+            AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard);
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -282,7 +288,17 @@ namespace DeltaForceTracker
             var today = DateTime.Today;
             var dailyStats = _dbManager.GetDailyStats(today);
 
-            CurrentBalanceText.Text = ValueParser.FormatBalance(currentBalance);
+            // Animate balance count-up for premium feel
+            var currentText = CurrentBalanceText.Text;
+            var currentValue = ValueParser.ParseBalance(currentText);
+            if (Math.Abs((double)(currentBalance - currentValue)) > 0.01)
+            {
+                AnimationHelper.CountUpAnimation(CurrentBalanceText, (double)currentValue, (double)currentBalance);
+            }
+            else
+            {
+                CurrentBalanceText.Text = ValueParser.FormatBalance(currentBalance);
+            }
             
             var pl = dailyStats.ProfitLoss;
             DailyPLText.Text = ValueParser.FormatProfitLoss(pl);
@@ -349,7 +365,9 @@ namespace DeltaForceTracker
                     Stroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
                     GeometrySize = 8,
                     GeometryStroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
-                    GeometryFill = new SolidColorPaint(neonBlue)
+                    GeometryFill = new SolidColorPaint(neonBlue),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(800), // Smooth drawing animation
+                    EasingFunction = LiveChartsCore.EasingFunctions.EasingFunctions.ExponentialOut
                 }
             };
 

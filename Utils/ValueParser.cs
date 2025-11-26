@@ -68,6 +68,18 @@ namespace DeltaForceTracker.Utils
             }
         }
 
+        public static decimal ParseBalance(string formattedValue)
+        {
+            try
+            {
+                return ParseBalanceString(formattedValue);
+            }
+            catch
+            {
+                return 0m;
+            }
+        }
+
         public static string FormatProfitLoss(decimal value)
         {
             var prefix = value >= 0 ? "+" : "";

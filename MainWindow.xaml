@@ -2,18 +2,23 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:controls="clr-namespace:DeltaForceTracker.Controls"
         Title="{DynamicResource Lang.Title}"
         Height="720"
         Width="1080"
-        Background="{StaticResource DarkBackgroundBrush}"
+        Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource MainFont}">
+        FontFamily="{StaticResource MainFont}"
+        Loaded="Window_Loaded">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" ResizeBorderThickness="4"/>
     </WindowChrome.WindowChrome>
 
     <Grid>
+        <!-- Animated Background Layer -->
+        <controls:AnimatedBackground/>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title Bar -->
             <RowDefinition Height="*"/>    <!-- Content -->
@@ -64,7 +69,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Current Balance (Big Card) -->
-                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
+                            <Border x:Name="BalanceCard" Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource Lang.CurrentBalance}" Style="{StaticResource LabelText}"/>
                                     <TextBlock x:Name="CurrentBalanceText" Text="0.00M" Style="{StaticResource ValueText}" Foreground="{StaticResource AccentBrush}"/>
@@ -73,7 +78,7 @@
                             </Border>
 
                             <!-- Daily P&L -->
-                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
+                            <Border x:Name="PLCard" Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="{DynamicResource Lang.DailyPL}" Style="{StaticResource LabelText}"/>
                                     <TextBlock x:Name="DailyPLText" Text="+0.00M" FontSize="42" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
@@ -89,7 +94,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Status -->
-                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
+                            <Border x:Name="StatusCard" Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource Lang.Status}" Style="{StaticResource LabelText}"/>
                                     <TextBlock x:Name="StatusText" Text="{DynamicResource Lang.Status.Ready}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="18" TextWrapping="Wrap"/>
@@ -97,7 +102,7 @@
                             </Border>
 
                             <!-- Actions -->
-                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
+                            <Border x:Name="ActionsCard" Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource Lang.Actions}" Style="{StaticResource LabelText}"/>
                                     <WrapPanel Orientation="Horizontal">
