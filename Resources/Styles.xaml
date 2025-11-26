@@ -137,7 +137,6 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
         <Setter Property="Margin" Value="0,0,0,8"/>
-        <Setter Property="TextTransform" Value="Uppercase"/>
     </Style>
 
     <Style x:Key="ValueText" TargetType="TextBlock">
