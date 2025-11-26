@@ -366,8 +366,7 @@ namespace DeltaForceTracker
                     GeometrySize = 8,
                     GeometryStroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
                     GeometryFill = new SolidColorPaint(neonBlue),
-                    AnimationsSpeed = TimeSpan.FromMilliseconds(800), // Smooth drawing animation
-                    EasingFunction = LiveChartsCore.EasingFunctions.EasingFunctions.ExponentialOut
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(800) // Smooth drawing animation
                 }
             };
 
