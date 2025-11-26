@@ -121,8 +121,11 @@
                         <DoubleAnimation Storyboard.TargetName="BracketPath"
                                        Storyboard.TargetProperty="Opacity"
                                        From="0.4" To="1.0" Duration="0:0:2"
-                                       AutoReverse="True"
-                                       EasingFunction="{StaticResource {x:Static Storyboard.SineEaseProperty}}"/>
+                                       AutoReverse="True">
+                            <DoubleAnimation.EasingFunction>
+                                <SineEase EasingMode="EaseInOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
