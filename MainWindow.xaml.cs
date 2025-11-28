@@ -76,11 +76,11 @@ namespace DeltaForceTracker
                 
                 _isInitialized = true;
 
-                // Load Quote of the Day - DISABLED FOR DEBUGGING
-                // LoadRandomQuote();
+                // Load Quote of the Day
+                LoadRandomQuote();
 
                 // Premium entrance animations for dashboard cards (after initialization)
-                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard /*, QuoteCard */);
+                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
             }
             catch (Exception ex)
             {
@@ -271,7 +271,6 @@ namespace DeltaForceTracker
             }
         }
 
-        /* DISABLED FOR DEBUGGING - Quote Card
         private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
         {
             LoadRandomQuote(animate: true);
@@ -313,7 +312,6 @@ namespace DeltaForceTracker
                 QuoteText.Text = newQuote;
             }
         }
-        */
 
         private void LanguageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
