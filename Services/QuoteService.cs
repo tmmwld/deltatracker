@@ -91,7 +91,7 @@ namespace DeltaForceTracker.Services
         private class QuoteData
         {
             [JsonProperty("quotes")]
-            public List<string> Quotes { get; set; }
+            public List<string>? Quotes { get; set; }
         }
     }
 }
