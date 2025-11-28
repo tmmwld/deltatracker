@@ -271,6 +271,7 @@ namespace DeltaForceTracker
             }
         }
 
+        /* DISABLED FOR DEBUGGING - Quote Card
         private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
         {
             LoadRandomQuote(animate: true);
@@ -312,6 +313,7 @@ namespace DeltaForceTracker
                 QuoteText.Text = newQuote;
             }
         }
+        */
 
         private void LanguageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
