@@ -114,7 +114,7 @@
                             </Border>
                         </Grid>
 
-                        <!-- Quote of the Day Card -->
+                        <!-- Quote of the Day Card - TEMPORARILY DISABLED FOR DEBUGGING
                         <Border x:Name="QuoteCard" Style="{StaticResource Card}">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -122,7 +122,6 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Header with Refresh Button -->
                                 <Grid Grid.Row="0" Margin="0,0,0,15">
                                     <TextBlock Text="{DynamicResource Lang.QuoteOfTheDay}" 
                                              Style="{StaticResource LabelText}"
@@ -137,7 +136,6 @@
                                           ToolTip="{DynamicResource Lang.RefreshQuote}"/>
                                 </Grid>
 
-                                <!-- Quote Text -->
                                 <TextBlock x:Name="QuoteText"
                                          Grid.Row="1"
                                          Text="Сегодня — хороший день чтобы win!"
@@ -151,6 +149,7 @@
                                          TextAlignment="Center"/>
                             </Grid>
                         </Border>
+                        -->
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

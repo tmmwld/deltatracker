@@ -76,11 +76,11 @@ namespace DeltaForceTracker
                 
                 _isInitialized = true;
 
-                // Load Quote of the Day
-                LoadRandomQuote();
+                // Load Quote of the Day - DISABLED FOR DEBUGGING
+                // LoadRandomQuote();
 
                 // Premium entrance animations for dashboard cards (after initialization)
-                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
+                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard /*, QuoteCard */);
             }
             catch (Exception ex)
             {
