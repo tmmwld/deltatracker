@@ -44,4 +44,8 @@
     <s:String x:Key="Lang.Confirm.Title">Confirm Reset</s:String>
     <s:String x:Key="Lang.Success.Reset">All data has been reset.</s:String>
     
+    <!-- Quote of the Day --></s:String>
+    <s:String x:Key="Lang.QuoteOfTheDay">QUOTE OF THE DAY</s:String>
+    <s:String x:Key="Lang.RefreshQuote">New Quote</s:String>
+    
 </ResourceDictionary>

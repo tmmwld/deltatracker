@@ -44,4 +44,8 @@
     <s:String x:Key="Lang.Confirm.Title">Подтверждение сброса</s:String>
     <s:String x:Key="Lang.Success.Reset">Все данные сброшены.</s:String>
     
+    <!-- Quote of the Day -->
+    <s:String x:Key="Lang.QuoteOfTheDay">ЦИТАТА ДНЯ</s:String>
+    <s:String x:Key="Lang.RefreshQuote">Новая цитата</s:String>
+    
 </ResourceDictionary>

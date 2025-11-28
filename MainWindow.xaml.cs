@@ -12,6 +12,7 @@ using DeltaForceTracker.Models;
 using DeltaForceTracker.OCR;
 using DeltaForceTracker.Utils;
 using DeltaForceTracker.Views;
+using DeltaForceTracker.Services;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -28,6 +29,7 @@ namespace DeltaForceTracker
         private GlobalHotkey? _hotkey;
         private Rectangle? _scanRegion;
         private bool _isInitialized = false;
+        private QuoteService _quoteService;
 
         public MainWindow()
         {
@@ -35,6 +37,7 @@ namespace DeltaForceTracker
             
             _dbManager = new DatabaseManager();
             _ocrEngine = new TesseractOCREngine();
+            _quoteService = new QuoteService();
             
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
@@ -73,8 +76,11 @@ namespace DeltaForceTracker
                 
                 _isInitialized = true;
 
+                // Load Quote of the Day
+                LoadRandomQuote();
+
                 // Premium entrance animations for dashboard cards (after initialization)
-                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard);
+                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
             }
             catch (Exception ex)
             {
@@ -262,6 +268,48 @@ namespace DeltaForceTracker
                         MessageBoxImage.Error
                     );
                 }
+            }
+        }
+
+        private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadRandomQuote(animate: true);
+        }
+
+        private void LoadRandomQuote(bool animate = false)
+        {
+            var newQuote = _quoteService.GetRandomQuote();
+
+            if (animate)
+            {
+                // Fade out
+                var fadeOut = new System.Windows.Media.Animation.DoubleAnimation
+                {
+                    From = 1.0,
+                    To = 0.0,
+                    Duration = new Duration(TimeSpan.FromMilliseconds(200))
+                };
+
+                fadeOut.Completed += (s, args) =>
+                {
+                    QuoteText.Text = newQuote;
+
+                    // Fade in
+                    var fadeIn = new System.Windows.Media.Animation.DoubleAnimation
+                    {
+                        From = 0.0,
+                        To = 1.0,
+                        Duration = new Duration(TimeSpan.FromMilliseconds(400))
+                    };
+
+                    QuoteText.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+                };
+
+                QuoteText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+            }
+            else
+            {
+                QuoteText.Text = newQuote;
             }
         }
 

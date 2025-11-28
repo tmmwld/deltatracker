@@ -113,6 +113,44 @@
                                 </StackPanel>
                             </Border>
                         </Grid>
+
+                        <!-- Quote of the Day Card -->
+                        <Border x:Name="QuoteCard" Style="{StaticResource Card}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Header with Refresh Button -->
+                                <Grid Grid.Row="0" Margin="0,0,0,15">
+                                    <TextBlock Text="{DynamicResource Lang.QuoteOfTheDay}" 
+                                             Style="{StaticResource LabelText}"
+                                             VerticalAlignment="Center"/>
+                                    <Button x:Name="RefreshQuoteButton"
+                                          Content="↻"
+                                          Style="{StaticResource ModernButton}"
+                                          FontSize="20"
+                                          Padding="8,4"
+                                          HorizontalAlignment="Right"
+                                          Click="RefreshQuoteButton_Click"
+                                          ToolTip="{DynamicResource Lang.RefreshQuote}"/>
+                                </Grid>
+
+                                <!-- Quote Text -->
+                                <TextBlock x:Name="QuoteText"
+                                         Grid.Row="1"
+                                         Text="Сегодня — хороший день чтобы win!"
+                                         FontSize="18"
+                                         FontWeight="Medium"
+                                         FontStyle="Italic"
+                                         Foreground="{StaticResource AccentBrush}"
+                                         TextWrapping="Wrap"
+                                         LineHeight="26"
+                                         HorizontalAlignment="Center"
+                                         TextAlignment="Center"/>
+                            </Grid>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
