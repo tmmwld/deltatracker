@@ -40,12 +40,6 @@ namespace DeltaForceTracker
             Closing += MainWindow_Closing;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Premium entrance animations for dashboard cards
-            AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard);
-        }
-
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -78,6 +72,9 @@ namespace DeltaForceTracker
                 RefreshAnalytics();
                 
                 _isInitialized = true;
+
+                // Premium entrance animations for dashboard cards (after initialization)
+                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard);
             }
             catch (Exception ex)
             {

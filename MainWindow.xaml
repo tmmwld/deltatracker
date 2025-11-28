@@ -8,8 +8,7 @@
         Width="1080"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource MainFont}"
-        Loaded="Window_Loaded">
+        FontFamily="{StaticResource MainFont}">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" ResizeBorderThickness="4"/>
