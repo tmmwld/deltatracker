@@ -363,12 +363,18 @@ namespace DeltaForceTracker
             if (bestDay != null)
             {
                 BestDayText.Text = ValueParser.FormatProfitLoss(bestDay.ProfitLoss);
+                BestDayText.Foreground = bestDay.ProfitLoss >= 0 
+                    ? (SolidColorBrush)FindResource("SuccessBrush")
+                    : (SolidColorBrush)FindResource("ErrorBrush");
             }
 
             var worstDay = _dbManager.GetWorstDay();
             if (worstDay != null)
             {
                 WorstDayText.Text = ValueParser.FormatProfitLoss(worstDay.ProfitLoss);
+                WorstDayText.Foreground = worstDay.ProfitLoss >= 0 
+                    ? (SolidColorBrush)FindResource("SuccessBrush")
+                    : (SolidColorBrush)FindResource("ErrorBrush");
             }
 
             var allScans = _dbManager.GetAllScans();
