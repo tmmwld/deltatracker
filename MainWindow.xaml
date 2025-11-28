@@ -8,7 +8,8 @@
         Width="1080"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource MainFont}">
+        FontFamily="{StaticResource MainFont}"
+        Icon="delta_force_pnl_icon.ico">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" ResizeBorderThickness="4"/>
