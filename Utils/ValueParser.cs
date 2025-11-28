@@ -82,8 +82,8 @@ namespace DeltaForceTracker.Utils
 
         public static string FormatProfitLoss(decimal value)
         {
-            var prefix = value >= 0 ? "+" : "";
-            return $"{prefix}{FormatBalance(value)}";
+            var prefix = value >= 0 ? "+" : "-";
+            return $"{prefix}{FormatBalance(Math.Abs(value))}";
         }
     }
 }
