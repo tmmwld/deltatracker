@@ -333,17 +333,8 @@ namespace DeltaForceTracker
             var today = DateTime.Today;
             var dailyStats = _dbManager.GetDailyStats(today);
 
-            // Animate balance count-up for premium feel
-            var currentText = CurrentBalanceText.Text;
-            var currentValue = ValueParser.ParseBalance(currentText);
-            if (Math.Abs((double)(currentBalance - currentValue)) > 0.01)
-            {
-                AnimationHelper.CountUpAnimation(CurrentBalanceText, (double)currentValue, (double)currentBalance);
-            }
-            else
-            {
-                CurrentBalanceText.Text = ValueParser.FormatBalance(currentBalance);
-            }
+            // Simple text update (count-up animation causes parsing issues)
+            CurrentBalanceText.Text = ValueParser.FormatBalance(currentBalance);
             
             var pl = dailyStats.ProfitLoss;
             DailyPLText.Text = ValueParser.FormatProfitLoss(pl);
