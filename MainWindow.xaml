@@ -39,7 +39,7 @@
                     <TextBlock Text="TRACKER" FontWeight="Light" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16"/>
                 </StackPanel>
 
-                <!-- Language Switcher & Controls -->
+                <!-- Language Switcher & Window Controls -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
                     <ComboBox x:Name="LanguageSelector" 
                               Style="{StaticResource TacticalComboBox}"
@@ -50,7 +50,36 @@
                         <ComboBoxItem Content="RU" Tag="ru"/>
                     </ComboBox>
                     
-                    <!-- Simple Window Controls (Optional, system ones still work if CaptionHeight > 0) -->
+                    <!-- Window Control Buttons -->
+                    <Button x:Name="MinimizeButton"
+                            Content="—"
+                            Style="{StaticResource ModernButton}"
+                            Width="40"
+                            Height="30"
+                            FontSize="16"
+                            Margin="5,0,0,0"
+                            Click="MinimizeButton_Click"
+                            ToolTip="Minimize"/>
+                    
+                    <Button x:Name="MaximizeButton"
+                            Content="□"
+                            Style="{StaticResource ModernButton}"
+                            Width="40"
+                            Height="30"
+                            FontSize="16"
+                            Margin="5,0,0,0"
+                            Click="MaximizeButton_Click"
+                            ToolTip="Maximize"/>
+                    
+                    <Button x:Name="CloseButton"
+                            Content="✕"
+                            Style="{StaticResource ModernButton}"
+                            Width="40"
+                            Height="30"
+                            FontSize="16"
+                            Margin="5,0,0,0"
+                            Click="CloseButton_Click"
+                            ToolTip="Close"/>
                 </StackPanel>
             </Grid>
         </Border>

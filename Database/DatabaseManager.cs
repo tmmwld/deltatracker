@@ -7,10 +7,11 @@ using Microsoft.Data.Sqlite;
 
 namespace DeltaForceTracker.Database
 {
-    public class DatabaseManager
+    public class DatabaseManager : IDisposable
     {
         private readonly string _connectionString;
         private readonly string _dbPath;
+        private bool _disposed = false;
 
         public DatabaseManager()
         {
@@ -341,6 +342,27 @@ namespace DeltaForceTracker.Database
             {
                 transaction.Rollback();
                 throw;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Close all SQLite connections for this database
+                    // Note: We use 'using' statements in each method, so connections should already be closed
+                    // This is a final cleanup to ensure no lingering connections
+                    SqliteConnection.ClearPool(new SqliteConnection(_connectionString));
+                }
+                _disposed = true;
             }
         }
     }

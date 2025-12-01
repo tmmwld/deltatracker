@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace DeltaForceTracker.Services
 {
-    public class QuoteService
+    public class QuoteService : IDisposable
     {
         private List<string> _quotes;
         private Random _random;
@@ -92,6 +92,13 @@ namespace DeltaForceTracker.Services
         {
             [JsonProperty("quotes")]
             public List<string>? Quotes { get; set; }
+        }
+
+        public void Dispose()
+        {
+            // Clear managed resources
+            _quotes?.Clear();
+            _remainingQuotes?.Clear();
         }
     }
 }

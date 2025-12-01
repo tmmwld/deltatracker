@@ -47,23 +47,23 @@ namespace DeltaForceTracker
         {
             try
             {
-                // Initialize OCR
+                // Initialize OCR engine
                 _ocrEngine.Initialize();
                 
-                // Load settings
+                // Load saved settings (region, hotkey, language)
                 LoadSettings();
                 
-                // Register hotkey
-                var windowHandle = new WindowInteropHelper(this).Handle;
+                // Register global hotkey (MOVED HERE from constructor)
                 var hotkeyString = _dbManager.GetSetting("Hotkey") ?? "F8";
                 var key = GlobalHotkey.ParseKeyString(hotkeyString);
                 
+                var windowHandle = new WindowInteropHelper(this).Handle;
                 _hotkey = new GlobalHotkey(windowHandle, key);
-                _hotkey.HotkeyPressed += OnHotkeyPressed;
+                _hotkey.HotkeyPressed += Hotkey_Pressed;
                 
                 if (_hotkey.Register())
                 {
-                    UpdateStatus("Hotkey registered: " + hotkeyString);
+                    UpdateStatus($"Hotkey registered: {hotkeyString}");
                 }
                 else
                 {
@@ -84,19 +84,31 @@ namespace DeltaForceTracker
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
-                    $"Initialization error: {ex.Message}\n\nMake sure tessdata folder exists.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                MessageBox.Show($"Error during initialization: {ex.Message}", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void MainWindow_Closing(object? sender, EventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _hotkey?.Dispose();
-            _ocrEngine?.Dispose();
+            try
+            {
+                // Save settings before exit
+                SaveSettings();
+                
+                // Dispose all resources in proper order
+                _hotkey?.Dispose();
+                _ocrEngine?.Dispose();
+                _quoteService?.Dispose();
+                _dbManager?.Dispose();
+                
+                // Force SQLite to release all file locks
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't prevent closing
+                System.Diagnostics.Debug.WriteLine($"Error during cleanup: {ex.Message}");
+            }
         }
 
         private void LoadSettings()
@@ -138,9 +150,38 @@ namespace DeltaForceTracker
             }
         }
 
-        private void OnHotkeyPressed(object? sender, EventArgs e)
+        private void Hotkey_Pressed(object? sender, EventArgs e)
         {
+            // Invoke on UI thread to avoid cross-thread issues
             Dispatcher.Invoke(() => PerformScan());
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                // Assuming MaximizeButton is a control in your XAML
+                // You might need to cast sender or access it by name if it's not a direct property
+                // For example: ((Button)sender).Content = "□"; or MaximizeButton.Content = "□";
+                // For now, I'll assume MaximizeButton is accessible directly.
+                MaximizeButton.Content = "□"; 
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+                MaximizeButton.Content = "❐";
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
         private void ScanButton_Click(object sender, RoutedEventArgs e)
@@ -322,8 +363,12 @@ namespace DeltaForceTracker
                 App.Instance.ChangeLanguage(langCode);
                 _dbManager.SaveSetting("Language", langCode);
                 
-                // Refresh UI to update any code-behind strings if needed
+                // Refresh all UI elements to apply language changes
                 RefreshDashboard();
+                RefreshAnalytics();
+                
+                // Reload quote in new language context
+                LoadRandomQuote();
             }
         }
 
