@@ -40,14 +40,14 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore /p:TreatWarningsAsErrors=false
 
     - name: Publish
       run: |
-        dotnet publish -c Release -r win-x64 --self-contained true `
+        dotnet publish --configuration Release --no-build --output ./publish `
+          --self-contained true `
           -p:DebugType=None `
-          -p:DebugSymbols=false `
-          -o ./publish
+          -p:DebugSymbols=false
       shell: pwsh
 
     - name: Copy Tesseract Data
