@@ -26,10 +26,11 @@ namespace DeltaForceTracker
     {
         private DatabaseManager _dbManager;
         private TesseractOCREngine _ocrEngine;
-        private LowLevelGlobalHotkey? _hotkey;
+        private PollingGlobalHotkey? _hotkey;
         private Rectangle? _scanRegion;
         private bool _isInitialized = false;
         private QuoteService? _quoteService;
+        private string _currentLanguage = "en";
 
         public MainWindow()
         {
@@ -53,24 +54,24 @@ namespace DeltaForceTracker
                 // Load saved settings (region, hotkey, language)
                 LoadSettings();
                 
-                // Register LOW-LEVEL global hotkey (works in fullscreen games!)
+                // Register POLLING global hotkey (works in fullscreen games!)
                 var hotkeyString = _dbManager.GetSetting("Hotkey") ?? "F8";
-                var key = LowLevelGlobalHotkey.ParseKeyString(hotkeyString);
+                var key = PollingGlobalHotkey.ParseKeyString(hotkeyString);
                 
-                System.Diagnostics.Debug.WriteLine($"Registering low-level hotkey: {hotkeyString}");
+                System.Diagnostics.Debug.WriteLine($"Registering polling hotkey: {hotkeyString}");
                 
-                _hotkey = new LowLevelGlobalHotkey(key);
+                _hotkey = new PollingGlobalHotkey(key);
                 _hotkey.HotkeyPressed += Hotkey_Pressed;
                 
                 if (_hotkey.Register())
                 {
                     UpdateStatus($"Hotkey registered: {hotkeyString}");
-                    System.Diagnostics.Debug.WriteLine($"✓ Low-level hotkey {hotkeyString} registered successfully");
+                    System.Diagnostics.Debug.WriteLine($"✓ Polling hotkey {hotkeyString} registered successfully");
                 }
                 else
                 {
                     UpdateStatus("Failed to register hotkey: " + hotkeyString);
-                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register low-level hotkey {hotkeyString}");
+                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register polling hotkey {hotkeyString}");
                 }
                 
                 // Load initial data
@@ -131,19 +132,12 @@ namespace DeltaForceTracker
             
             // Load Language
             var lang = _dbManager.GetSetting("Language") ?? "en";
+            _currentLanguage = lang;
             System.Diagnostics.Debug.WriteLine($"Loading saved language: {lang}");
             App.Instance.ChangeLanguage(lang);
             
-            // Update selector to match (without triggering SelectionChanged since _isInitialized is still false)
-            foreach (ComboBoxItem item in LanguageSelector.Items)
-            {
-                if (item.Tag?.ToString() == lang)
-                {
-                    LanguageSelector.SelectedItem = item;
-                    System.Diagnostics.Debug.WriteLine($"Set LanguageSelector to: {lang}");
-                    break;
-                }
-            }
+            // Update button text to current language
+            LanguageToggleButton.Content = lang.ToUpper();
         }
 
         private void SaveSettings()
@@ -395,31 +389,26 @@ namespace DeltaForceTracker
             }
         }
 
-        private void LanguageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void LanguageToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"LanguageSelector_SelectionChanged fired. _isInitialized={_isInitialized}");
+            // Toggle between EN and RU
+            _currentLanguage = _currentLanguage == "en" ? "ru" : "en";
             
-            if (!_isInitialized) return;
-
-            if (LanguageSelector.SelectedItem is ComboBoxItem item && item.Tag is string langCode)
-            {
-                System.Diagnostics.Debug.WriteLine($"Switching language to: {langCode}");
-                App.Instance.ChangeLanguage(langCode);
-                _dbManager.SaveSetting("Language", langCode);
-                
-                // Refresh all UI elements to apply language changes
-                RefreshDashboard();
-                RefreshAnalytics();
-                
-                // Reload quote in new language context
-                LoadRandomQuote();
-                
-                System.Diagnostics.Debug.WriteLine($"✓ Language switched to {langCode}");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("✗ Language selector item or tag is null");
-            }
+            System.Diagnostics.Debug.WriteLine($"Toggling language to: {_currentLanguage}");
+            
+            // Update button text
+            LanguageToggleButton.Content = _currentLanguage.ToUpper();
+            
+            // Change language
+            App.Instance.ChangeLanguage(_currentLanguage);
+            _dbManager.SaveSetting("Language", _currentLanguage);
+            
+            // Refresh all UI elements
+            RefreshDashboard();
+            RefreshAnalytics();
+            LoadRandomQuote();
+            
+            System.Diagnostics.Debug.WriteLine($"✓ Language toggled to {_currentLanguage}");
         }
 
         private void RefreshDashboard()

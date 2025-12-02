@@ -41,13 +41,15 @@
 
                 <!-- Language Switcher & Window Controls -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
-                    <ComboBox x:Name="LanguageSelector" 
-                              Width="70" 
-                              Margin="0,0,15,0"
-                              SelectionChanged="LanguageSelector_SelectionChanged">
-                        <ComboBoxItem Content="EN" Tag="en" IsSelected="True"/>
-                        <ComboBoxItem Content="RU" Tag="ru"/>
-                    </ComboBox>
+                    <!-- Language Toggle Button -->
+                    <Button x:Name="LanguageToggleButton" 
+                            Content="EN"
+                            Width="50" 
+                            Height="30"
+                            Margin="0,0,15,0"
+                            Style="{StaticResource ModernButton}"
+                            FontSize="11"
+                            Click="LanguageToggleButton_Click"/>
                     
                     <!-- Window Control Buttons -->
                     <Button x:Name="MinimizeButton"
@@ -287,7 +289,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.4.6"
+                   Text="v1.5.0"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
