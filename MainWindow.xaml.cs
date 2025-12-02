@@ -94,7 +94,7 @@ namespace DeltaForceTracker
             }
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
@@ -132,19 +132,19 @@ namespace DeltaForceTracker
             
             // Load Language
             var lang = _dbManager.GetSetting("Language") ?? "en";
+            System.Diagnostics.Debug.WriteLine($"Loading saved language: {lang}");
             App.Instance.ChangeLanguage(lang);
             
-            // Update selector without triggering event
-            _isInitialized = false;
+            // Update selector to match (without triggering SelectionChanged since _isInitialized is still false)
             foreach (ComboBoxItem item in LanguageSelector.Items)
             {
-                if (item.Tag.ToString() == lang)
+                if (item.Tag?.ToString() == lang)
                 {
                     LanguageSelector.SelectedItem = item;
+                    System.Diagnostics.Debug.WriteLine($"Set LanguageSelector to: {lang}");
                     break;
                 }
             }
-            _isInitialized = true;
         }
 
         private void SaveSettings()
@@ -158,8 +158,26 @@ namespace DeltaForceTracker
 
         private void Hotkey_Pressed(object? sender, EventArgs e)
         {
-            // Invoke on UI thread to avoid cross-thread issues
-            Dispatcher.Invoke(() => PerformScan());
+            System.Diagnostics.Debug.WriteLine($"🔥 HOTKEY PRESSED! Timestamp: {DateTime.Now:HH:mm:ss}");
+            
+            // TEMPORARY: Show message box to confirm hotkey is firing (even when minimized)
+            System.Windows.MessageBox.Show($"Hotkey triggered! {DateTime.Now:HH:mm:ss}", "Debug", MessageBoxButton.OK);
+            
+            try
+            {
+                // Invoke on UI thread to avoid cross-thread issues
+                Dispatcher.Invoke(() =>
+                {
+                    System.Diagnostics.Debug.WriteLine("Executing PerformScan from hotkey...");
+                    PerformScan();
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Error in Hotkey_Pressed: {ex.Message}");
+                // Show error to user since app might be minimized
+                System.Windows.MessageBox.Show($"Hotkey error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
