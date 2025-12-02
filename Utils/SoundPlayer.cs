@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Windows.Media;
 
@@ -11,8 +13,9 @@ namespace DeltaForceTracker.Utils
     public static class SoundPlayer
     {
         private static MediaPlayer _scanPlayer = new MediaPlayer();
-        private static MediaPlayer _tiltPlayer = new MediaPlayer();
+        private static List<MediaPlayer> _tiltPlayers = new List<MediaPlayer>();
         private static MediaPlayer _achPlayer = new MediaPlayer();
+        private static Random _random = new Random();
 
         static SoundPlayer()
         {
@@ -20,20 +23,34 @@ namespace DeltaForceTracker.Utils
             try
             {
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string sfxDir = Path.Combine(baseDir, "Resources", "Sfx");
                 
-                string scanPath = Path.Combine(baseDir, "Resources", "Sfx", "scan.mp3");
+                // Load scan sound
+                string scanPath = Path.Combine(sfxDir, "scan.mp3");
                 if (File.Exists(scanPath))
                 {
                     _scanPlayer.Open(new Uri(scanPath, UriKind.Absolute));
                 }
 
-                string tiltPath = Path.Combine(baseDir, "Resources", "Sfx", "tilt.mp3");
-                if (File.Exists(tiltPath))
+                // Load all tilt sounds (tilt1.wav, tilt2.wav, etc.)
+                if (Directory.Exists(sfxDir))
                 {
-                    _tiltPlayer.Open(new Uri(tiltPath, UriKind.Absolute));
+                    var tiltFiles = Directory.GetFiles(sfxDir, "tilt*.wav")
+                        .OrderBy(f => f)
+                        .ToList();
+
+                    foreach (var tiltFile in tiltFiles)
+                    {
+                        var player = new MediaPlayer();
+                        player.Open(new Uri(tiltFile, UriKind.Absolute));
+                        _tiltPlayers.Add(player);
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Loaded {_tiltPlayers.Count} tilt sounds");
                 }
 
-                string achPath = Path.Combine(baseDir, "Resources", "Sfx", "ach.mp3");
+                // Load achievement sound
+                string achPath = Path.Combine(sfxDir, "ach.mp3");
                 if (File.Exists(achPath))
                 {
                     _achPlayer.Open(new Uri(achPath, UriKind.Absolute));
@@ -63,15 +80,27 @@ namespace DeltaForceTracker.Utils
         }
 
         /// <summary>
-        /// Play tilt button sound
+        /// Play random tilt button sound
         /// </summary>
         public static void PlayTiltSound()
         {
             try
             {
-                _tiltPlayer.Stop();
-                _tiltPlayer.Position = TimeSpan.Zero;
-                _tiltPlayer.Play();
+                if (_tiltPlayers.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("No tilt sounds loaded");
+                    return;
+                }
+
+                // Pick random tilt sound
+                int index = _random.Next(_tiltPlayers.Count);
+                var player = _tiltPlayers[index];
+
+                player.Stop();
+                player.Position = TimeSpan.Zero;
+                player.Play();
+
+                System.Diagnostics.Debug.WriteLine($"Playing tilt sound #{index + 1}");
             }
             catch (Exception ex)
             {
