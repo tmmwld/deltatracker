@@ -28,7 +28,6 @@ namespace DeltaForceTracker
         private TesseractOCREngine _ocrEngine;
         private PollingGlobalHotkey? _hotkey;
         private Rectangle? _scanRegion;
-        private bool _isInitialized = false;
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
 
@@ -83,10 +82,6 @@ namespace DeltaForceTracker
 
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
-                
-                // IMPORTANT: Set _isInitialized LAST so language selector doesn't fire during setup
-                _isInitialized = true;
-                System.Diagnostics.Debug.WriteLine("✓ MainWindow initialization complete");
             }
             catch (Exception ex)
             {
@@ -277,12 +272,18 @@ namespace DeltaForceTracker
 
         private void SelectRegionButton_Click(object sender, RoutedEventArgs e)
         {
-            var selector = new RegionSelectorWindow();
-            if (selector.ShowDialog() == true)
+            var dialog = new RegionSelectorWindow();
+            if (dialog.ShowDialog() == true && dialog.SelectedRegion.HasValue)
             {
-                _scanRegion = selector.SelectedRegion;
+                _scanRegion = dialog.SelectedRegion.Value;
                 SaveSettings();
-                UpdateStatus($"Region updated: {_scanRegion.Value.Width}x{_scanRegion.Value.Height}");
+                UpdateStatus(App.Instance.GetString("Lang.Success.RegionSet"));
+                
+                // Refresh analytics only if we have data
+                if (_scanRegion.HasValue)
+                {
+                    RefreshAnalytics();
+                }
             }
         }
 
@@ -351,6 +352,8 @@ namespace DeltaForceTracker
 
         private void LoadRandomQuote(bool animate = false)
         {
+            if (_quoteService == null) return;
+            
             var newQuote = _quoteService.GetRandomQuote();
 
             if (animate)
