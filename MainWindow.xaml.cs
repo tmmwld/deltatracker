@@ -273,17 +273,12 @@ namespace DeltaForceTracker
         private void SelectRegionButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new RegionSelectorWindow();
-            if (dialog.ShowDialog() == true && dialog.SelectedRegion.HasValue)
+            if (dialog.ShowDialog() == true)
             {
-                _scanRegion = dialog.SelectedRegion.Value;
+                _scanRegion = dialog.SelectedRegion;
                 SaveSettings();
                 UpdateStatus(App.Instance.GetString("Lang.Success.RegionSet"));
-                
-                // Refresh analytics only if we have data
-                if (_scanRegion.HasValue)
-                {
-                    RefreshAnalytics();
-                }
+                RefreshAnalytics();
             }
         }
 
