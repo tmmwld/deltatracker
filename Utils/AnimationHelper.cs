@@ -182,13 +182,14 @@ namespace DeltaForceTracker.Utils
                 To = 200,
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-            };
+            double rippleSize = 200; // Define rippleSize here
 
-            var opacityAnimation = new DoubleAnimation
+            var sizeAnimation = new DoubleAnimation(0, rippleSize, new Duration(TimeSpan.FromMilliseconds(600)))
             {
-                From = 0.3,
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(600)),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+            var opacityAnimation = new DoubleAnimation(0.4, 0, new Duration(TimeSpan.FromMilliseconds(600)))
+            {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
 
@@ -197,6 +198,32 @@ namespace DeltaForceTracker.Utils
             ellipse.BeginAnimation(Ellipse.WidthProperty, sizeAnimation);
             ellipse.BeginAnimation(Ellipse.HeightProperty, sizeAnimation);
             ellipse.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
+        }
+
+        /// <summary>
+        /// Tilt button feedback animation - scale bump + opacity flash
+        /// </summary>
+        public static void TiltButtonFeedback(Button button)
+        {
+            // Setup transform
+            var scaleTransform = new ScaleTransform(1.0, 1.0);
+            button.RenderTransform = scaleTransform;
+            button.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            // Scale animation (bump up then return)
+            var scaleAnimation = new DoubleAnimationUsingKeyFrames();
+            scaleAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(1.15, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(100))));
+            scaleAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(1.0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(300))));
+
+            // Opacity flash
+            var opacityAnimation = new DoubleAnimationUsingKeyFrames();
+            opacityAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(0.6, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(50))));
+            opacityAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(1.0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(300))));
+
+            // Start animations
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimation);
+            button.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
         }
     }
 }

@@ -189,6 +189,29 @@ namespace DeltaForceTracker
             PerformScan();
         }
 
+        private void TiltButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Play feedback animation
+            AnimationHelper.TiltButtonFeedback(TiltButton);
+            
+            // Record tilt event
+            _dbManager.RecordTilt(DateTime.Now);
+            
+            // Refresh analytics to update counters
+            RefreshAnalytics();
+        }
+
+        private void SelectRegionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selector = new RegionSelectorWindow();
+            if (selector.ShowDialog() == true)
+            {
+                _scanRegion = selector.SelectedRegion;
+                SaveSettings();
+                UpdateStatus($"Region updated: {_scanRegion.Value.Width}x{_scanRegion.Value.Height}");
+            }
+        }
+
         private void PerformScan()
         {
             if (!_scanRegion.HasValue)
@@ -424,6 +447,13 @@ namespace DeltaForceTracker
 
             var allScans = _dbManager.GetAllScans();
             TotalScansText.Text = allScans.Count.ToString();
+
+            // Update tilt counters
+            var totalTilts = _dbManager.GetTiltCount();
+            TotalTiltsText.Text = totalTilts.ToString();
+            
+            var todayTilts = _dbManager.GetDailyTiltCount(DateTime.Today);
+            TodayTiltsText.Text = todayTilts.ToString();
 
             // Update history grid
             var recentScans = _dbManager.GetRecentScans(50);

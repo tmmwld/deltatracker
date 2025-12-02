@@ -180,6 +180,16 @@
                                          TextAlignment="Center"/>
                             </Grid>
                         </Border>
+
+                        <!-- "I'm Tilted" Button - Bottom Center -->
+                        <Border HorizontalAlignment="Center" Margin="0,30,0,0">
+                            <Button x:Name="TiltButton"
+                                    Content="{DynamicResource Lang.TiltButton}"
+                                    Style="{StaticResource TiltButton}"
+                                    Width="250"
+                                    Height="60"
+                                    Click="TiltButton_Click"/>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -202,6 +212,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/> <!-- NEW: For Tilt Counter -->
                             </Grid.ColumnDefinitions>
 
                             <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0" Padding="15">
@@ -231,6 +242,29 @@
                                     <TextBlock x:Name="TotalScansText" Text="0" Foreground="{StaticResource TextPrimaryBrush}" FontSize="20" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
+
+                            <!-- Tilt Counter Card -->
+                            <Border Style="{StaticResource Card}" Grid.Column="4" Margin="10,0,0,0" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.Analytics.Tilts}" 
+                                               Style="{StaticResource LabelText}" 
+                                               FontSize="11"/>
+                                    <TextBlock x:Name="TotalTiltsText" 
+                                               Text="0" 
+                                               Foreground="#FF1744" 
+                                               FontSize="28" 
+                                               FontWeight="Bold"/>
+                                    <TextBlock Text="{DynamicResource Lang.Analytics.TodayTilts}" 
+                                               Style="{StaticResource LabelText}" 
+                                               FontSize="10" 
+                                               Margin="0,5,0,2"/>
+                                    <TextBlock x:Name="TodayTiltsText" 
+                                               Text="0" 
+                                               Foreground="#DC143C" 
+                                               FontSize="16" 
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
                         </Grid>
 
                         <!-- History Table -->
@@ -250,5 +284,16 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
+
+        <!-- Version Label - Bottom Right -->
+        <TextBlock Grid.Row="1" 
+                   x:Name="VersionLabel"
+                   Text="v1.4.0"
+                   FontSize="9"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   Opacity="0.5"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,15,8"/>
     </Grid>
 </Window>

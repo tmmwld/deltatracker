@@ -50,6 +50,14 @@ namespace DeltaForceTracker
 
             // Add the new one
             Resources.MergedDictionaries.Add(dict);
+            
+            // Force UI to update all DynamicResource bindings
+            if (MainWindow != null)
+            {
+                MainWindow.Language = System.Windows.Markup.XmlLanguage.GetLanguage(
+                    cultureCode == "ru" ? "ru-RU" : "en-US"
+                );
+            }
         }
 
         public string GetString(string key)

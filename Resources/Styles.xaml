@@ -74,6 +74,19 @@
     <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+    </Style>
+
+    <!-- Tilt Button Style: Large Red Tactical Button -->
+    <Style x:Key="TiltButton" TargetType="Button">
+        <Setter Property="Background" Value="#DC143C"/> <!-- Crimson Red -->
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#FF1744"/> <!-- Bright Red -->
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+        <Setter Property="Padding" Value="30,15"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -81,18 +94,20 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
+                            CornerRadius="8">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                            <Setter Property="Background" Value="#FF1744"/>
                             <Setter TargetName="border" Property="Effect">
                                 <Setter.Value>
-                                    <DropShadowEffect Color="{StaticResource ErrorColor}" BlurRadius="20" ShadowDepth="0" Opacity="0.8"/>
+                                    <DropShadowEffect Color="#FF1744" BlurRadius="20" ShadowDepth="0" Opacity="0.9"/>
                                 </Setter.Value>
                             </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#B71C1C"/> <!-- Dark Red -->
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

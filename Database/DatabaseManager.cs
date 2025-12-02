@@ -46,6 +46,11 @@ namespace DeltaForceTracker.Database
                     Key TEXT PRIMARY KEY,
                     Value TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS TiltEvents (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Timestamp TEXT NOT NULL
+                );
             ";
             command.ExecuteNonQuery();
         }
@@ -343,6 +348,80 @@ namespace DeltaForceTracker.Database
                 transaction.Rollback();
                 throw;
             }
+        }
+
+        // Tilt Event Methods
+        public void RecordTilt(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT INTO TiltEvents (Timestamp)
+                VALUES ($timestamp)
+            ";
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        public int GetTiltCount()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM TiltEvents";
+            
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public int GetDailyTiltCount(DateTime date)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM TiltEvents 
+                WHERE DATE(Timestamp) = DATE($date)
+            ";
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public List<TiltEvent> GetTiltsForDateRange(DateTime start, DateTime end)
+        {
+            var tilts = new List<TiltEvent>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT Id, Timestamp
+                FROM TiltEvents
+                WHERE Timestamp BETWEEN $start AND $end
+                ORDER BY Timestamp ASC
+            ";
+            command.Parameters.AddWithValue("$start", start.ToString("o"));
+            command.Parameters.AddWithValue("$end", end.ToString("o"));
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                tilts.Add(new TiltEvent
+                {
+                    Id = reader.GetInt32(0),
+                    Timestamp = DateTime.Parse(reader.GetString(1))
+                });
+            }
+
+            return tilts;
         }
 
         public void Dispose()

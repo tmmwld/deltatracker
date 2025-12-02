@@ -48,4 +48,9 @@
     <s:String x:Key="Lang.QuoteOfTheDay">QUOTE OF THE DAY</s:String>
     <s:String x:Key="Lang.RefreshQuote">New Quote</s:String>
     
+    <!-- Tilt Tracking -->
+    <s:String x:Key="Lang.TiltButton">I'M TILTED 🔥</s:String>
+    <s:String x:Key="Lang.Analytics.Tilts">TILTS</s:String>
+    <s:String x:Key="Lang.Analytics.TodayTilts">Today</s:String>
+    
 </ResourceDictionary>

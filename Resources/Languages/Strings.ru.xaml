@@ -48,4 +48,9 @@
     <s:String x:Key="Lang.QuoteOfTheDay">ЦИТАТА ДНЯ</s:String>
     <s:String x:Key="Lang.RefreshQuote">Новая цитата</s:String>
     
+    <!-- Tilt Tracking -->
+    <s:String x:Key="Lang.TiltButton">Я СГОРЕЛ 🔥</s:String>
+    <s:String x:Key="Lang.Analytics.Tilts">ТИЛЬТЫ</s:String>
+    <s:String x:Key="Lang.Analytics.TodayTilts">Сегодня</s:String>
+    
 </ResourceDictionary>
