@@ -191,6 +191,9 @@ namespace DeltaForceTracker
 
         private void TiltButton_Click(object sender, RoutedEventArgs e)
         {
+            // Play tilt sound
+            SoundPlayer.PlayTiltSound();
+            
             // Play feedback animation
             AnimationHelper.TiltButtonFeedback(TiltButton);
             
@@ -227,6 +230,9 @@ namespace DeltaForceTracker
                 {
                     var now = DateTime.Now;
                     _dbManager.RecordScan(now, result.rawValue, result.numericValue);
+                    
+                    // Play success sound
+                    SoundPlayer.PlayScanSound();
                     
                     UpdateStatus($"Scan successful: {result.rawValue}");
                     RefreshDashboard();
