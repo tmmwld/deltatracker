@@ -26,10 +26,10 @@ namespace DeltaForceTracker
     {
         private DatabaseManager _dbManager;
         private TesseractOCREngine _ocrEngine;
-        private GlobalHotkey? _hotkey;
+        private LowLevelGlobalHotkey? _hotkey;
         private Rectangle? _scanRegion;
         private bool _isInitialized = false;
-        private QuoteService _quoteService;
+        private QuoteService? _quoteService;
 
         public MainWindow()
         {
@@ -53,25 +53,24 @@ namespace DeltaForceTracker
                 // Load saved settings (region, hotkey, language)
                 LoadSettings();
                 
-                // Register global hotkey (MOVED HERE from constructor)
+                // Register LOW-LEVEL global hotkey (works in fullscreen games!)
                 var hotkeyString = _dbManager.GetSetting("Hotkey") ?? "F8";
-                var key = GlobalHotkey.ParseKeyString(hotkeyString);
+                var key = LowLevelGlobalHotkey.ParseKeyString(hotkeyString);
                 
-                var windowHandle = new WindowInteropHelper(this).Handle;
-                System.Diagnostics.Debug.WriteLine($"Window handle: {windowHandle}");
+                System.Diagnostics.Debug.WriteLine($"Registering low-level hotkey: {hotkeyString}");
                 
-                _hotkey = new GlobalHotkey(windowHandle, key);
+                _hotkey = new LowLevelGlobalHotkey(key);
                 _hotkey.HotkeyPressed += Hotkey_Pressed;
                 
                 if (_hotkey.Register())
                 {
                     UpdateStatus($"Hotkey registered: {hotkeyString}");
-                    System.Diagnostics.Debug.WriteLine($"✓ Hotkey {hotkeyString} registered successfully");
+                    System.Diagnostics.Debug.WriteLine($"✓ Low-level hotkey {hotkeyString} registered successfully");
                 }
                 else
                 {
                     UpdateStatus("Failed to register hotkey: " + hotkeyString);
-                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register hotkey {hotkeyString}");
+                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register low-level hotkey {hotkeyString}");
                 }
                 
                 // Load initial data

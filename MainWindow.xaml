@@ -42,7 +42,6 @@
                 <!-- Language Switcher & Window Controls -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
                     <ComboBox x:Name="LanguageSelector" 
-                              Style="{StaticResource TacticalComboBox}"
                               Width="70" 
                               Margin="0,0,15,0"
                               SelectionChanged="LanguageSelector_SelectionChanged">
@@ -288,7 +287,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.4.5"
+                   Text="v1.4.6"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
