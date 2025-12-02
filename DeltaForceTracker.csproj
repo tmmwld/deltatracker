@@ -3,12 +3,12 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>DeltaForceTracker</AssemblyName>
     <RootNamespace>DeltaForceTracker</RootNamespace>
-    <Version>1.4.9</Version>
+    <Version>1.4.10</Version>
     <Authors>Delta Force Balance Tracker</Authors>
     <Company>DFBalanceTracker</Company>
     <Product>Delta Force Balance Tracker</Product>
