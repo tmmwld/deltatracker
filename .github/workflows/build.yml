@@ -44,10 +44,10 @@ jobs:
 
     - name: Publish
       run: |
-        dotnet publish --configuration Release --no-build --output ./publish `
-          --self-contained true `
+        dotnet publish -c Release -r win-x64 --self-contained true `
           -p:DebugType=None `
-          -p:DebugSymbols=false
+          -p:DebugSymbols=false `
+          -o ./publish
       shell: pwsh
 
     - name: Copy Tesseract Data
