@@ -13,7 +13,7 @@
     <Company>DFBalanceTracker</Company>
     <Product>Delta Force Balance Tracker</Product>
     <Description>Track your Delta Force in-game balance with OCR</Description>
-    <ApplicationIcon>delta_force_pnl_icon.ico</ApplicationIcon>
+    <ApplicationIcon>DT_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="delta_force_pnl_icon.ico">
+    <Resource Include="DT_icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <None Include="Resources\Data\affirmations.json">
