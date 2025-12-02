@@ -182,14 +182,13 @@ namespace DeltaForceTracker.Utils
                 To = 200,
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-            double rippleSize = 200; // Define rippleSize here
-
-            var sizeAnimation = new DoubleAnimation(0, rippleSize, new Duration(TimeSpan.FromMilliseconds(600)))
-            {
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
-            var opacityAnimation = new DoubleAnimation(0.4, 0, new Duration(TimeSpan.FromMilliseconds(600)))
+
+            var opacityAnimation = new DoubleAnimation
             {
+                From = 0.4,
+                To = 0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(600)),
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
 
