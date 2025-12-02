@@ -58,29 +58,35 @@ namespace DeltaForceTracker
                 var key = GlobalHotkey.ParseKeyString(hotkeyString);
                 
                 var windowHandle = new WindowInteropHelper(this).Handle;
+                System.Diagnostics.Debug.WriteLine($"Window handle: {windowHandle}");
+                
                 _hotkey = new GlobalHotkey(windowHandle, key);
                 _hotkey.HotkeyPressed += Hotkey_Pressed;
                 
                 if (_hotkey.Register())
                 {
                     UpdateStatus($"Hotkey registered: {hotkeyString}");
+                    System.Diagnostics.Debug.WriteLine($"✓ Hotkey {hotkeyString} registered successfully");
                 }
                 else
                 {
                     UpdateStatus("Failed to register hotkey: " + hotkeyString);
+                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register hotkey {hotkeyString}");
                 }
                 
                 // Load initial data
                 RefreshDashboard();
                 RefreshAnalytics();
-                
-                _isInitialized = true;
 
                 // Load Quote of the Day
                 LoadRandomQuote();
 
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
+                
+                // IMPORTANT: Set _isInitialized LAST so language selector doesn't fire during setup
+                _isInitialized = true;
+                System.Diagnostics.Debug.WriteLine("✓ MainWindow initialization complete");
             }
             catch (Exception ex)
             {
@@ -374,10 +380,13 @@ namespace DeltaForceTracker
 
         private void LanguageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"LanguageSelector_SelectionChanged fired. _isInitialized={_isInitialized}");
+            
             if (!_isInitialized) return;
 
             if (LanguageSelector.SelectedItem is ComboBoxItem item && item.Tag is string langCode)
             {
+                System.Diagnostics.Debug.WriteLine($"Switching language to: {langCode}");
                 App.Instance.ChangeLanguage(langCode);
                 _dbManager.SaveSetting("Language", langCode);
                 
@@ -387,6 +396,12 @@ namespace DeltaForceTracker
                 
                 // Reload quote in new language context
                 LoadRandomQuote();
+                
+                System.Diagnostics.Debug.WriteLine($"✓ Language switched to {langCode}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("✗ Language selector item or tag is null");
             }
         }
 

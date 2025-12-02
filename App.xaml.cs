@@ -29,6 +29,8 @@ namespace DeltaForceTracker
 
         public void ChangeLanguage(string cultureCode)
         {
+            System.Diagnostics.Debug.WriteLine($"App.ChangeLanguage called with: {cultureCode}");
+            
             var dict = new ResourceDictionary();
             switch (cultureCode)
             {
@@ -41,15 +43,19 @@ namespace DeltaForceTracker
                     break;
             }
 
+            System.Diagnostics.Debug.WriteLine($"Loading dictionary: {dict.Source}");
+
             // Find and remove the old language dictionary
             var oldDict = Resources.MergedDictionaries.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Strings."));
             if (oldDict != null)
             {
                 Resources.MergedDictionaries.Remove(oldDict);
+                System.Diagnostics.Debug.WriteLine($"Removed old dictionary: {oldDict.Source}");
             }
 
             // Add the new one
             Resources.MergedDictionaries.Add(dict);
+            System.Diagnostics.Debug.WriteLine($"Added new dictionary. Total dictionaries: {Resources.MergedDictionaries.Count}");
             
             // Force UI to update all DynamicResource bindings
             if (MainWindow != null)
@@ -57,6 +63,11 @@ namespace DeltaForceTracker
                 MainWindow.Language = System.Windows.Markup.XmlLanguage.GetLanguage(
                     cultureCode == "ru" ? "ru-RU" : "en-US"
                 );
+                System.Diagnostics.Debug.WriteLine($"✓ MainWindow.Language set to {MainWindow.Language}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("✗ MainWindow is null!");
             }
         }
 
