@@ -36,7 +36,7 @@
         <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="Padding" Value="20,10"/>
+        <Setter Property="Padding" Value="25,12"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>

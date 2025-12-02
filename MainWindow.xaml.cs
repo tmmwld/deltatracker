@@ -153,9 +153,6 @@ namespace DeltaForceTracker
         {
             System.Diagnostics.Debug.WriteLine($"🔥 HOTKEY PRESSED! Timestamp: {DateTime.Now:HH:mm:ss}");
             
-            // TEMPORARY: Show message box to confirm hotkey is firing (even when minimized)
-            System.Windows.MessageBox.Show($"Hotkey triggered! {DateTime.Now:HH:mm:ss}", "Debug", MessageBoxButton.OK);
-            
             try
             {
                 // Invoke on UI thread to avoid cross-thread issues
