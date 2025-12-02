@@ -201,17 +201,6 @@ namespace DeltaForceTracker
             RefreshAnalytics();
         }
 
-        private void SelectRegionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var selector = new RegionSelectorWindow();
-            if (selector.ShowDialog() == true)
-            {
-                _scanRegion = selector.SelectedRegion;
-                SaveSettings();
-                UpdateStatus($"Region updated: {_scanRegion.Value.Width}x{_scanRegion.Value.Height}");
-            }
-        }
-
         private void PerformScan()
         {
             if (!_scanRegion.HasValue)

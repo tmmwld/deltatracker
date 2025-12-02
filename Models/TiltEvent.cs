@@ -1,3 +1,5 @@
+using System;
+
 namespace DeltaForceTracker.Models
 {
     public class TiltEvent
