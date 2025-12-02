@@ -31,13 +31,10 @@
     <None Include="Resources\Data\affirmations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Sfx\scan.mp3">
+    <None Include="Resources\Sfx\scan.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Sfx\tilt.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Sfx\ach.mp3">
+    <None Include="Resources\Sfx\ach.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Sfx\tilt1.wav">

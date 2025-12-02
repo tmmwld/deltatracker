@@ -26,7 +26,7 @@ namespace DeltaForceTracker.Utils
                 string sfxDir = Path.Combine(baseDir, "Resources", "Sfx");
                 
                 // Load scan sound
-                string scanPath = Path.Combine(sfxDir, "scan.mp3");
+                string scanPath = Path.Combine(sfxDir, "scan.wav");
                 if (File.Exists(scanPath))
                 {
                     _scanPlayer.Open(new Uri(scanPath, UriKind.Absolute));
@@ -50,7 +50,7 @@ namespace DeltaForceTracker.Utils
                 }
 
                 // Load achievement sound
-                string achPath = Path.Combine(sfxDir, "ach.mp3");
+                string achPath = Path.Combine(sfxDir, "ach.wav");
                 if (File.Exists(achPath))
                 {
                     _achPlayer.Open(new Uri(achPath, UriKind.Absolute));
