@@ -11,6 +11,10 @@
     <s:String x:Key="Lang.CurrentBalance">ТЕКУЩИЙ БАЛАНС</s:String>
     <s:String x:Key="Lang.DailyPL">ДНЕВНОЙ P&amp;L</s:String>
     <s:String x:Key="Lang.Status">СТАТУС</s:String>
+    <!-- Labels -->
+    <s:String x:Key="Lang.GlobalHotkey">ГЛОБАЛЬНЫЙ ХОТКЕЙ (Тройной Клик)</s:String>
+    <s:String x:Key="Lang.MouseButton4">Кнопка мыши 4 (x3)</s:String>
+    <s:String x:Key="Lang.MouseButton5">Кнопка мыши 5 (x3)</s:String>
     <s:String x:Key="Lang.Actions">ДЕЙСТВИЯ</s:String>
     
     <!-- Actions -->

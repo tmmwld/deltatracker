@@ -14,10 +14,15 @@
     <s:String x:Key="Lang.Actions">ACTIONS</s:String>
     
     <!-- Actions -->
-    <s:String x:Key="Lang.ScanNow">Scan Now (F8)</s:String>
-    <s:String x:Key="Lang.SelectRegion">Select OCR Region</s:String>
-    <s:String x:Key="Lang.ChangeHotkey">Change Hotkey</s:String>
-    <s:String x:Key="Lang.ResetAnalytics">Reset Analytics</s:String>
+    <s:String x:Key="Lang.ScanNow">SCAN NOW</s:String>
+    <s:String x:Key="Lang.SelectRegion">SELECT REGION</s:String>
+    <s:String x:Key="Lang.ChangeHotkey">CHANGE HOTKEY</s:String>
+    <s:String x:Key="Lang.ResetAnalytics">RESET ANALYTICS</s:String>
+    
+    <!-- Labels -->
+    <s:String x:Key="Lang.GlobalHotkey">GLOBAL HOTKEY (Triple-Click)</s:String>
+    <s:String x:Key="Lang.MouseButton4">Mouse Button 4 (x3)</s:String>
+    <s:String x:Key="Lang.MouseButton5">Mouse Button 5 (x3)</s:String>
     
     <!-- Analytics Cards -->
     <s:String x:Key="Lang.BalanceHistory">BALANCE HISTORY</s:String>

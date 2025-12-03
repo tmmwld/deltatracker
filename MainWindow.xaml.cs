@@ -26,7 +26,7 @@ namespace DeltaForceTracker
     {
         private DatabaseManager _dbManager;
         private TesseractOCREngine _ocrEngine;
-        private PollingGlobalHotkey? _hotkey;
+        private MouseHook? _mouseHook;
         private Rectangle? _scanRegion;
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
@@ -50,27 +50,26 @@ namespace DeltaForceTracker
                 // Initialize OCR engine
                 _ocrEngine.Initialize();
                 
-                // Load saved settings (region, hotkey, language)
+                // Load saved settings (region, language, mouse hotkey)
                 LoadSettings();
                 
-                // Register POLLING global hotkey (works in fullscreen games!)
-                var hotkeyString = _dbManager.GetSetting("Hotkey") ?? "F8";
-                var key = PollingGlobalHotkey.ParseKeyString(hotkeyString);
+                // Register MOUSE global hotkey (works in fullscreen games with anticheat!)
+                var mouseButton = _dbManager.GetSetting("MouseHotkey") ?? "Mouse4";
                 
-                System.Diagnostics.Debug.WriteLine($"Registering polling hotkey: {hotkeyString}");
+                System.Diagnostics.Debug.WriteLine($"Registering mouse hotkey: {mouseButton} (triple-click)");
                 
-                _hotkey = new PollingGlobalHotkey(key);
-                _hotkey.HotkeyPressed += Hotkey_Pressed;
+                _mouseHook = new MouseHook(mouseButton);
+                _mouseHook.HotkeyPressed += Hotkey_Pressed;
                 
-                if (_hotkey.Register())
+                if (_mouseHook.Register())
                 {
-                    UpdateStatus($"Hotkey registered: {hotkeyString}");
-                    System.Diagnostics.Debug.WriteLine($"✓ Polling hotkey {hotkeyString} registered successfully");
+                    UpdateStatus($"Mouse hotkey registered: {mouseButton} (x3)");
+                    System.Diagnostics.Debug.WriteLine($"✓ Mouse hotkey {mouseButton} registered successfully");
                 }
                 else
                 {
-                    UpdateStatus("Failed to register hotkey: " + hotkeyString);
-                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register polling hotkey {hotkeyString}");
+                    UpdateStatus("Failed to register mouse hotkey");
+                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register mouse hotkey {mouseButton}");
                 }
                 
                 // Load initial data
@@ -97,7 +96,7 @@ namespace DeltaForceTracker
                 SaveSettings();
                 
                 // Dispose all resources in proper order
-                _hotkey?.Dispose();
+                _mouseHook?.Dispose();
                 _ocrEngine?.Dispose();
                 _quoteService?.Dispose();
                 _dbManager?.Dispose();
@@ -133,6 +132,17 @@ namespace DeltaForceTracker
             
             // Update button text to current language
             LanguageToggleButton.Content = lang.ToUpper();
+            
+            // Load Mouse Hotkey preference
+            var mouseHotkey = _dbManager.GetSetting("MouseHotkey") ?? "Mouse4";
+            if (mouseHotkey == "Mouse5")
+            {
+                Mouse5Radio.IsChecked = true;
+            }
+            else
+            {
+                Mouse4Radio.IsChecked = true;
+            }
         }
 
         private void SaveSettings()
@@ -279,33 +289,6 @@ namespace DeltaForceTracker
                 SaveSettings();
                 UpdateStatus(App.Instance.GetString("Lang.Success.RegionSet"));
                 RefreshAnalytics();
-            }
-        }
-
-        private void ChangeHotkeyButton_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new HotkeyDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                var newKey = dialog.SelectedKey;
-                
-                if (_hotkey != null)
-                {
-                    if (_hotkey.UpdateHotkey(newKey))
-                    {
-                        _dbManager.SaveSetting("Hotkey", newKey.ToString());
-                        UpdateStatus($"Hotkey changed to {newKey}");
-                    }
-                    else
-                    {
-                        System.Windows.MessageBox.Show(
-                            "Failed to register new hotkey.",
-                            "Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error
-                        );
-                    }
-                }
             }
         }
 
@@ -574,6 +557,28 @@ namespace DeltaForceTracker
             }
             
             return result;
+        }
+
+        private void MouseHotkeyChanged(object sender, RoutedEventArgs e)
+        {
+            var selectedButton = Mouse4Radio.IsChecked == true ? "Mouse4" : "Mouse5";
+            
+            // Re-register hook with new button
+            _mouseHook?.Dispose();
+            _mouseHook = new MouseHook(selectedButton);
+            _mouseHook.HotkeyPressed += Hotkey_Pressed;
+            
+            if (_mouseHook.Register())
+            {
+                _dbManager.SaveSetting("MouseHotkey", selectedButton);
+                UpdateStatus($"Hotkey changed to {selectedButton} (x3)");
+                System.Diagnostics.Debug.WriteLine($"✓ Mouse hotkey changed to {selectedButton}");
+            }
+            else
+            {
+                UpdateStatus("Failed to register new mouse hotkey");
+                System.Diagnostics.Debug.WriteLine($"✗ Failed to change mouse hotkey to {selectedButton}");
+            }
         }
 
         private void UpdateStatus(string message)
