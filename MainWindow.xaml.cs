@@ -466,9 +466,11 @@ namespace DeltaForceTracker
             var todayTilts = _dbManager.GetDailyTiltCount(DateTime.Today);
             TodayTiltsText.Text = todayTilts.ToString();
 
-            // Update history grid
+            // Update history grid with delta calculation
             var recentScans = _dbManager.GetRecentScans(50);
-            HistoryDataGrid.ItemsSource = recentScans.OrderByDescending(s => s.Timestamp).ToList();
+            var orderedScans = recentScans.OrderByDescending(s => s.Timestamp).ToList();
+            var historyItems = CalculateDeltas(orderedScans);
+            HistoryDataGrid.ItemsSource = historyItems;
 
             // Update chart
             UpdateChart(allScans);
@@ -519,6 +521,59 @@ namespace DeltaForceTracker
                     SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20))
                 }
             };
+        }
+
+        private List<ScanHistoryViewModel> CalculateDeltas(List<BalanceScan> scans)
+        {
+            var result = new List<ScanHistoryViewModel>();
+            
+            for (int i = 0; i < scans.Count; i++)
+            {
+                var current = scans[i];
+                decimal? delta = null;
+                string deltaText = "";
+                string deltaIndicator = "";
+                string deltaColor = "#94A3B8"; // Default gray for no change
+                
+                // Calculate delta from previous scan (next in list since it's ordered newest first)
+                if (i < scans.Count - 1)
+                {
+                    var previous = scans[i + 1];
+                    delta = current.NumericValue - previous.NumericValue;
+                    
+                    if (delta > 0)
+                    {
+                        deltaText = ValueParser.FormatProfitLoss(delta.Value);
+                        deltaIndicator = "▲";
+                        deltaColor = "#00FF88"; // Green (SuccessColor)
+                    }
+                    else if (delta < 0)
+                    {
+                        deltaText = ValueParser.FormatProfitLoss(delta.Value);
+                        deltaIndicator = "▼";
+                        deltaColor = "#FF2A6D"; // Red (ErrorColor)
+                    }
+                    else
+                    {
+                        deltaText = "0";
+                        deltaIndicator = "";
+                        deltaColor = "#94A3B8"; // Gray (TextSecondary)
+                    }
+                }
+                
+                result.Add(new ScanHistoryViewModel
+                {
+                    Timestamp = current.Timestamp,
+                    RawValue = current.RawValue,
+                    NumericValue = current.NumericValue,
+                    Delta = delta,
+                    DeltaText = deltaText,
+                    DeltaIndicator = deltaIndicator,
+                    DeltaColor = deltaColor
+                });
+            }
+            
+            return result;
         }
 
         private void UpdateStatus(string message)

@@ -276,6 +276,26 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="{DynamicResource Lang.Time}" Binding="{Binding Timestamp, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="*"/>
                                         <DataGridTextColumn Header="{DynamicResource Lang.RawValue}" Binding="{Binding RawValue}" Width="*"/>
+                                        
+                                        <!-- Delta Column -->
+                                        <DataGridTemplateColumn Header="{DynamicResource Lang.Delta}" Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <TextBlock Text="{Binding DeltaIndicator}" 
+                                                                   Foreground="{Binding DeltaColor}"
+                                                                   FontSize="12"
+                                                                   FontWeight="Bold"
+                                                                   Margin="0,0,5,0"/>
+                                                        <TextBlock Text="{Binding DeltaText}" 
+                                                                   Foreground="{Binding DeltaColor}"
+                                                                   FontWeight="Bold"
+                                                                   FontFamily="{StaticResource MonoFont}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        
                                         <DataGridTextColumn Header="{DynamicResource Lang.NumericValue}" Binding="{Binding NumericValue, StringFormat='N2'}" Width="*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
@@ -289,7 +309,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.4.15"
+                   Text="v1.5.0"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"

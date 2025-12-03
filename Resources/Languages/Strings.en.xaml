@@ -26,6 +26,7 @@
     <s:String x:Key="Lang.HighestBalance">HIGHEST BALANCE</s:String>
     <s:String x:Key="Lang.TotalScans">TOTAL SCANS</s:String>
     <s:String x:Key="Lang.ScanHistory">SCAN HISTORY</s:String>
+    <s:String x:Key="Lang.Delta">Delta</s:String>
     
     <!-- DataGrid Headers -->
     <s:String x:Key="Lang.Time">Time</s:String>
