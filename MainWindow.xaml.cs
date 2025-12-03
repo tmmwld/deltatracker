@@ -30,6 +30,7 @@ namespace DeltaForceTracker
         private Rectangle? _scanRegion;
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
+        private bool _isInitialized = false;
 
         public MainWindow()
         {
@@ -81,6 +82,9 @@ namespace DeltaForceTracker
 
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
+                
+                // Mark as initialized - allow MouseHotkeyChanged events now
+                _isInitialized = true;
             }
             catch (Exception ex)
             {
@@ -561,6 +565,9 @@ namespace DeltaForceTracker
 
         private void MouseHotkeyChanged(object sender, RoutedEventArgs e)
         {
+            // Ignore events during initialization
+            if (!_isInitialized) return;
+            
             var selectedButton = Mouse4Radio.IsChecked == true ? "Mouse4" : "Mouse5";
             
             // Re-register hook with new button
