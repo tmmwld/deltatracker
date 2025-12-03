@@ -54,23 +54,23 @@ namespace DeltaForceTracker
                 // Load saved settings (region, language, mouse hotkey)
                 LoadSettings();
                 
-                // Register MOUSE global hotkey (works in fullscreen games with anticheat!)
+                // Register RAW INPUT global hotkey (professional anticheat-safe solution!)
                 var mouseButton = _dbManager.GetSetting("MouseHotkey") ?? "Mouse4";
                 
-                System.Diagnostics.Debug.WriteLine($"Registering mouse hotkey: {mouseButton} (triple-click)");
+                System.Diagnostics.Debug.WriteLine($"Registering Raw Input mouse hotkey: {mouseButton} (triple-click)");
                 
-                _mouseHook = new MouseHook(mouseButton);
+                _mouseHook = new MouseHook(mouseButton, this); // Pass window reference for Raw Input
                 _mouseHook.HotkeyPressed += Hotkey_Pressed;
                 
                 if (_mouseHook.Register())
                 {
                     UpdateStatus($"Mouse hotkey registered: {mouseButton} (x3)");
-                    System.Diagnostics.Debug.WriteLine($"✓ Mouse hotkey {mouseButton} registered successfully");
+                    System.Diagnostics.Debug.WriteLine($"✓ Raw Input mouse hotkey {mouseButton} registered successfully");
                 }
                 else
                 {
                     UpdateStatus("Failed to register mouse hotkey");
-                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register mouse hotkey {mouseButton}");
+                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register Raw Input mouse hotkey {mouseButton}");
                 }
                 
                 // Load initial data
@@ -570,21 +570,21 @@ namespace DeltaForceTracker
             
             var selectedButton = Mouse4Radio.IsChecked == true ? "Mouse4" : "Mouse5";
             
-            // Re-register hook with new button
+            // Re-register Raw Input with new button
             _mouseHook?.Dispose();
-            _mouseHook = new MouseHook(selectedButton);
+            _mouseHook = new MouseHook(selectedButton, this); // Pass window reference
             _mouseHook.HotkeyPressed += Hotkey_Pressed;
             
             if (_mouseHook.Register())
             {
                 _dbManager.SaveSetting("MouseHotkey", selectedButton);
                 UpdateStatus($"Hotkey changed to {selectedButton} (x3)");
-                System.Diagnostics.Debug.WriteLine($"✓ Mouse hotkey changed to {selectedButton}");
+                System.Diagnostics.Debug.WriteLine($"✓ Raw Input hotkey changed to {selectedButton}");
             }
             else
             {
                 UpdateStatus("Failed to register new mouse hotkey");
-                System.Diagnostics.Debug.WriteLine($"✗ Failed to change mouse hotkey to {selectedButton}");
+                System.Diagnostics.Debug.WriteLine($"✗ Failed to change Raw Input hotkey to {selectedButton}");
             }
         }
 

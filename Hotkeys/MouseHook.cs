@@ -1,41 +1,44 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace DeltaForceTracker.Hotkeys
 {
     public class MouseHook : IDisposable
     {
-        private const int VK_XBUTTON1 = 0x05; // Mouse Button 4
-        private const int VK_XBUTTON2 = 0x06; // Mouse Button 5
+        private const int WM_INPUT = 0x00FF;
+        private const int RIM_TYPEMOUSE = 0;
+        private const int RI_MOUSE_BUTTON_4_DOWN = 0x0040;
+        private const int RI_MOUSE_BUTTON_5_DOWN = 0x0100;
         private const int TRIPLE_CLICK_WINDOW_MS = 500;
-        private const int POLLING_INTERVAL_MS = 50;
 
         [DllImport("user32.dll")]
-        private static extern short GetAsyncKeyState(int vKey);
+        private static extern bool RegisterRawInputDevices(RAWINPUTDEVICE[] pRawInputDevices, uint uiNumDevices, uint cbSize);
 
-        private DispatcherTimer? _pollingTimer;
-        private DispatcherTimer? _resetTimer;
-        private int _targetButton;
-        private bool _wasPressed = false;
+        [DllImport("user32.dll")]
+        private static extern uint GetRawInputData(IntPtr hRawInput, uint uiCommand, IntPtr pData, ref uint pcbSize, uint cbSizeHeader);
 
+        private const uint RID_INPUT = 0x10000003;
+        private const uint RIDEV_INPUTSINK = 0x00000100; // Receive input even when not focused
+
+        private Window _window;
+        private HwndSource? _hwndSource;
+        private int _targetButton; // RI_MOUSE_BUTTON_4_DOWN or RI_MOUSE_BUTTON_5_DOWN
+        
         // Triple-click detection
         private int _clickCount = 0;
         private DateTime _firstClickTime = DateTime.MinValue;
+        private DispatcherTimer? _resetTimer;
 
         public event EventHandler? HotkeyPressed;
 
-        public MouseHook(string buttonName)
+        public MouseHook(string buttonName, Window window)
         {
-            _targetButton = buttonName == "Mouse5" ? VK_XBUTTON2 : VK_XBUTTON1;
-
-            // Polling timer (check button state every 50ms)
-            _pollingTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(POLLING_INTERVAL_MS)
-            };
-            _pollingTimer.Tick += PollingTimer_Tick;
+            _window = window;
+            _targetButton = buttonName == "Mouse5" ? RI_MOUSE_BUTTON_5_DOWN : RI_MOUSE_BUTTON_4_DOWN;
 
             // Reset timer for click sequence
             _resetTimer = new DispatcherTimer
@@ -51,82 +54,182 @@ namespace DeltaForceTracker.Hotkeys
 
         public bool Register()
         {
-            _pollingTimer?.Start();
-            Debug.WriteLine($"MouseHook polling started for VK {_targetButton:X2} (50ms interval)");
-            return true; // Polling always succeeds
+            try
+            {
+                // Get window handle
+                var windowHelper = new WindowInteropHelper(_window);
+                IntPtr hwnd = windowHelper.Handle;
+
+                if (hwnd == IntPtr.Zero)
+                {
+                    Debug.WriteLine("❌ Window handle is null, cannot register Raw Input");
+                    return false;
+                }
+
+                // Register for Raw Input
+                RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
+                rid[0].usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
+                rid[0].usUsage = 0x02;     // HID_USAGE_GENERIC_MOUSE
+                rid[0].dwFlags = RIDEV_INPUTSINK; // Receive even when not focused!
+                rid[0].hwndTarget = hwnd;
+
+                if (!RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])))
+                {
+                    Debug.WriteLine("❌ RegisterRawInputDevices failed");
+                    return false;
+                }
+
+                // Hook into WndProc to receive WM_INPUT messages
+                _hwndSource = HwndSource.FromHwnd(hwnd);
+                if (_hwndSource != null)
+                {
+                    _hwndSource.AddHook(WndProc);
+                    Debug.WriteLine($"✅ Raw Input registered for button {(_targetButton == RI_MOUSE_BUTTON_4_DOWN ? "Mouse4" : "Mouse5")} (RIDEV_INPUTSINK - works unfocused!)");
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Raw Input registration error: {ex.Message}");
+                return false;
+            }
         }
 
         public void Unregister()
         {
-            _pollingTimer?.Stop();
+            if (_hwndSource != null)
+            {
+                _hwndSource.RemoveHook(WndProc);
+                _hwndSource = null;
+            }
             _resetTimer?.Stop();
-            Debug.WriteLine("MouseHook polling stopped");
+            Debug.WriteLine("Raw Input unregistered");
         }
 
-        private void PollingTimer_Tick(object? sender, EventArgs e)
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            try
+            if (msg == WM_INPUT)
             {
-                // Check if button is currently pressed (high-order bit set)
-                bool isPressed = (GetAsyncKeyState(_targetButton) & 0x8000) != 0;
-
-                // Detect button press (edge detection: not pressed -> pressed)
-                if (isPressed && !_wasPressed)
+                try
                 {
-                    var now = DateTime.Now;
+                    uint dwSize = 0;
+                    GetRawInputData(lParam, RID_INPUT, IntPtr.Zero, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER)));
 
-                    // Start new sequence if timeout expired
-                    if ((now - _firstClickTime).TotalMilliseconds > TRIPLE_CLICK_WINDOW_MS)
+                    IntPtr buffer = Marshal.AllocHGlobal((int)dwSize);
+                    try
                     {
-                        _clickCount = 1;
-                        _firstClickTime = now;
-                        Debug.WriteLine($"Click 1/3 detected");
-                    }
-                    else
-                    {
-                        _clickCount++;
-                        Debug.WriteLine($"Click {_clickCount}/3 detected");
-
-                        // Triple-click detected!
-                        if (_clickCount == 3)
+                        if (GetRawInputData(lParam, RID_INPUT, buffer, ref dwSize, (uint)Marshal.SizeOf(typeof(RAWINPUTHEADER))) == dwSize)
                         {
-                            Debug.WriteLine("🎯 TRIPLE-CLICK DETECTED!");
-                            HotkeyPressed?.Invoke(this, EventArgs.Empty);
-                            
-                            // Reset
-                            _clickCount = 0;
-                            _resetTimer?.Stop();
-                            _wasPressed = isPressed;
-                            return;
+                            RAWINPUT raw = Marshal.PtrToStructure<RAWINPUT>(buffer);
+
+                            if (raw.header.dwType == RIM_TYPEMOUSE)
+                            {
+                                // Check for our target button press
+                                if ((raw.mouse.ulButtons & _targetButton) != 0)
+                                {
+                                    OnButtonClick();
+                                }
+                            }
                         }
                     }
-
-                    // Restart reset timer
-                    _resetTimer?.Stop();
-                    _resetTimer?.Start();
+                    finally
+                    {
+                        Marshal.FreeHGlobal(buffer);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"WM_INPUT processing error: {ex.Message}");
+                }
+            }
 
-                _wasPressed = isPressed;
-            }
-            catch (Exception ex)
+            return IntPtr.Zero;
+        }
+
+        private void OnButtonClick()
+        {
+            var now = DateTime.Now;
+
+            // Start new sequence if timeout expired
+            if ((now - _firstClickTime).TotalMilliseconds > TRIPLE_CLICK_WINDOW_MS)
             {
-                Debug.WriteLine($"MouseHook polling error: {ex.Message}");
+                _clickCount = 1;
+                _firstClickTime = now;
+                Debug.WriteLine($"Click 1/3 detected");
             }
+            else
+            {
+                _clickCount++;
+                Debug.WriteLine($"Click {_clickCount}/3 detected");
+
+                // Triple-click detected!
+                if (_clickCount == 3)
+                {
+                    Debug.WriteLine("🎯 TRIPLE-CLICK DETECTED (Raw Input)!");
+                    HotkeyPressed?.Invoke(this, EventArgs.Empty);
+                    
+                    // Reset
+                    _clickCount = 0;
+                    _resetTimer?.Stop();
+                    return;
+                }
+            }
+
+            // Restart reset timer
+            _resetTimer?.Stop();
+            _resetTimer?.Start();
         }
 
         public void Dispose()
         {
             Unregister();
-            if (_pollingTimer != null)
-            {
-                _pollingTimer.Stop();
-                _pollingTimer = null;
-            }
             if (_resetTimer != null)
             {
                 _resetTimer.Stop();
                 _resetTimer = null;
             }
         }
+
+        #region P/Invoke Structures
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RAWINPUTDEVICE
+        {
+            public ushort usUsagePage;
+            public ushort usUsage;
+            public uint dwFlags;
+            public IntPtr hwndTarget;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RAWINPUTHEADER
+        {
+            public uint dwType;
+            public uint dwSize;
+            public IntPtr hDevice;
+            public IntPtr wParam;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct RAWINPUT
+        {
+            [FieldOffset(0)] public RAWINPUTHEADER header;
+            [FieldOffset(24)] public RAWMOUSE mouse;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RAWMOUSE
+        {
+            public ushort usFlags;
+            public uint ulButtons;
+            public uint ulRawButtons;
+            public int lLastX;
+            public int lLastY;
+            public uint ulExtraInformation;
+        }
+
+        #endregion
     }
 }
