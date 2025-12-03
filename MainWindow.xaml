@@ -116,22 +116,14 @@
                         </Grid>
 
                         <!-- Status & Actions Row -->
-                        <Grid>
+                        <Grid Margin="0,10,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Status -->
-                            <Border x:Name="StatusCard" Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0">
-                                <StackPanel>
-                                    <TextBlock Text="{DynamicResource Lang.Status}" Style="{StaticResource LabelText}"/>
-                                    <TextBlock x:Name="StatusText" Text="{DynamicResource Lang.Status.Ready}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="18" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Mouse Hotkey Selector -->
-                            <Border x:Name="ActionsCard" Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0" Padding="15">
+                            <!-- Mouse Hotkey Selector + Actions (LEFT) -->
+                            <Border x:Name="ActionsCard" Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0" Padding="15">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource Lang.GlobalHotkey}" 
                                                Style="{StaticResource LabelText}" 
@@ -179,6 +171,14 @@
                                                 Margin="0,0,0,0" 
                                                 Click="ResetDataButton_Click"/>
                                     </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Status (RIGHT) -->
+                            <Border x:Name="StatusCard" Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource Lang.Status}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock x:Name="StatusText" Text="{DynamicResource Lang.Status.Ready}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="18" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -348,7 +348,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.6.3"
+                   Text="v1.6.4"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
