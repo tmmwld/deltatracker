@@ -26,7 +26,7 @@ namespace DeltaForceTracker
     {
         private DatabaseManager _dbManager;
         private TesseractOCREngine _ocrEngine;
-        private MouseHook? _mouseHook;
+        private F8Hotkey? _f8Hotkey;
         private Rectangle? _scanRegion;
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
@@ -52,26 +52,24 @@ namespace DeltaForceTracker
                 // Initialize OCR engine
                 _ocrEngine.Initialize();
                 
-                // Load saved settings (region, language, mouse hotkey)
+                // Load saved settings (region, language)
                 LoadSettings();
                 
-                // Register RAW INPUT global hotkey (professional anticheat-safe solution!)
-                var mouseButton = _dbManager.GetSetting("MouseHotkey") ?? "Mouse4";
+                // Register F8 global hotkey (fixed, no customization needed)
+                System.Diagnostics.Debug.WriteLine("Registering F8 global hotkey");
                 
-                System.Diagnostics.Debug.WriteLine($"Registering Raw Input mouse hotkey: {mouseButton} (triple-click)");
+                _f8Hotkey = new F8Hotkey(this);
+                _f8Hotkey.HotkeyPressed += Hotkey_Pressed;
                 
-                _mouseHook = new MouseHook(mouseButton, this); // Pass window reference for Raw Input
-                _mouseHook.HotkeyPressed += Hotkey_Pressed;
-                
-                if (_mouseHook.Register())
+                if (_f8Hotkey.Register())
                 {
-                    UpdateStatus($"Mouse hotkey registered: {mouseButton} (x3)");
-                    System.Diagnostics.Debug.WriteLine($"✓ Raw Input mouse hotkey {mouseButton} registered successfully");
+                    UpdateStatus("F8 hotkey registered");
+                    System.Diagnostics.Debug.WriteLine("✓ F8 hotkey registered successfully");
                 }
                 else
                 {
-                    UpdateStatus("Failed to register mouse hotkey");
-                    System.Diagnostics.Debug.WriteLine($"✗ Failed to register Raw Input mouse hotkey {mouseButton}");
+                    UpdateStatus("Failed to register F8 hotkey");
+                    System.Diagnostics.Debug.WriteLine("✗ Failed to register F8 hotkey");
                 }
                 
                 // Load initial data
@@ -102,7 +100,7 @@ namespace DeltaForceTracker
                 
                 // Dispose all resources in proper order
                 _floatingButton?.Close();
-                _mouseHook?.Dispose();
+                _f8Hotkey?.Dispose();
                 _ocrEngine?.Dispose();
                 _quoteService?.Dispose();
                 _dbManager?.Dispose();
@@ -138,17 +136,6 @@ namespace DeltaForceTracker
             
             // Update button text to current language
             LanguageToggleButton.Content = lang.ToUpper();
-            
-            // Load Mouse Hotkey preference
-            var mouseHotkey = _dbManager.GetSetting("MouseHotkey") ?? "Mouse4";
-            if (mouseHotkey == "Mouse5")
-            {
-                Mouse5Radio.IsChecked = true;
-            }
-            else
-            {
-                Mouse4Radio.IsChecked = true;
-            }
             
             // Load Floating Button preference
             var floatingEnabled = _dbManager.GetSetting("FloatingButtonEnabled") == "true";
@@ -567,31 +554,6 @@ namespace DeltaForceTracker
             }
             
             return result;
-        }
-
-        private void MouseHotkeyChanged(object sender, RoutedEventArgs e)
-        {
-            // Ignore events during initialization
-            if (!_isInitialized) return;
-            
-            var selectedButton = Mouse4Radio.IsChecked == true ? "Mouse4" : "Mouse5";
-            
-            // Re-register Raw Input with new button
-            _mouseHook?.Dispose();
-            _mouseHook = new MouseHook(selectedButton, this); // Pass window reference
-            _mouseHook.HotkeyPressed += Hotkey_Pressed;
-            
-            if (_mouseHook.Register())
-            {
-                _dbManager.SaveSetting("MouseHotkey", selectedButton);
-                UpdateStatus($"Hotkey changed to {selectedButton} (x3)");
-                System.Diagnostics.Debug.WriteLine($"✓ Raw Input hotkey changed to {selectedButton}");
-            }
-            else
-            {
-                UpdateStatus("Failed to register new mouse hotkey");
-                System.Diagnostics.Debug.WriteLine($"✗ Failed to change Raw Input hotkey to {selectedButton}");
-            }
         }
 
         private void FloatingButtonToggle_Checked(object sender, RoutedEventArgs e)

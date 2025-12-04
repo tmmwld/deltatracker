@@ -42,10 +42,10 @@ namespace DeltaForceTracker.Views
 
         private void Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            // Back to 85% opacity
+            // Back to 40% opacity
             if (sender is Border border)
             {
-                border.Opacity = 0.85;
+                border.Opacity = 0.4;
             }
         }
     }

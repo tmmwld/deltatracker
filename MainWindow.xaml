@@ -4,7 +4,7 @@
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:controls="clr-namespace:DeltaForceTracker.Controls"
         Title="{DynamicResource Lang.Title}"
-        Height="720"
+        Height="820"
         Width="1080"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
@@ -122,33 +122,44 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Mouse Hotkey Selector + Actions (LEFT) -->
+                            <!-- Actions Card (LEFT) -->
                             <Border x:Name="ActionsCard" Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0" Padding="15">
                                 <StackPanel>
-                                    <TextBlock Text="{DynamicResource Lang.GlobalHotkey}" 
+                                    <TextBlock Text="{DynamicResource Lang.Actions}" 
                                                Style="{StaticResource LabelText}" 
+                                               Margin="0,0,0,15"/>
+                                    
+                                    <Button x:Name="ScanButton" 
+                                            Content="{DynamicResource Lang.ScanNow}" 
+                                            Style="{StaticResource ModernButton}" 
+                                            Margin="0,0,0,10" 
+                                            Click="ScanButton_Click"/>
+                                    
+                                    <Button x:Name="SelectRegionButton" 
+                                            Content="{DynamicResource Lang.SelectRegion}" 
+                                            Style="{StaticResource ModernButton}" 
+                                            Margin="0,0,0,10" 
+                                            Click="SelectRegionButton_Click"/>
+                                    
+                                    <Button x:Name="ResetDataButton" 
+                                            Content="{DynamicResource Lang.ResetAnalytics}" 
+                                            Style="{StaticResource DangerButton}" 
+                                            Margin="0,0,0,15" 
+                                            Click="ResetDataButton_Click"/>
+                                    
+                                    <Separator Margin="0,0,0,10" Background="{StaticResource BorderBrush}"/>
+                                    
+                                    <!-- Hotkey Info -->
+                                    <TextBlock Text="{DynamicResource Lang.Hotkey}" 
+                                               Style="{StaticResource LabelText}" 
+                                               FontSize="11"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="F8" 
+                                               FontFamily="{StaticResource MainFont}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource AccentBrush}"
                                                Margin="0,0,0,10"/>
-                                    
-                                    <RadioButton x:Name="Mouse4Radio" 
-                                                 Content="{DynamicResource Lang.MouseButton4}"
-                                                 GroupName="MouseHotkey"
-                                                 IsChecked="True"
-                                                 Checked="MouseHotkeyChanged"
-                                                 FontFamily="{StaticResource MainFont}"
-                                                 FontSize="13"
-                                                 Foreground="{StaticResource TextPrimaryBrush}"
-                                                 Cursor="Hand"
-                                                 Margin="0,0,0,10"/>
-                                    
-                                    <RadioButton x:Name="Mouse5Radio" 
-                                                 Content="{DynamicResource Lang.MouseButton5}"
-                                                 GroupName="MouseHotkey"
-                                                 Checked="MouseHotkeyChanged"
-                                                 FontFamily="{StaticResource MainFont}"
-                                                 FontSize="13"
-                                                 Foreground="{StaticResource TextPrimaryBrush}"
-                                                 Cursor="Hand"
-                                                 Margin="0,0,0,10"/>
                                     
                                     <CheckBox x:Name="FloatingButtonToggle"
                                               Content="{DynamicResource Lang.FloatingButton}"
@@ -156,31 +167,9 @@
                                               FontSize="12"
                                               Foreground="{StaticResource TextSecondaryBrush}"
                                               Cursor="Hand"
-                                              Margin="0,5,0,10"
+                                              Margin="0,0,0,0"
                                               Checked="FloatingButtonToggle_Checked"
                                               Unchecked="FloatingButtonToggle_Unchecked"/>
-                                    
-                                    <Separator Margin="0,5,0,10" Background="{StaticResource BorderBrush}"/>
-                                    
-                                    <StackPanel Orientation="Vertical">
-                                        <Button x:Name="ScanButton" 
-                                                Content="{DynamicResource Lang.ScanNow}" 
-                                                Style="{StaticResource ModernButton}" 
-                                                Margin="0,0,0,10" 
-                                                Click="ScanButton_Click"/>
-                                        
-                                        <Button x:Name="SelectRegionButton" 
-                                                Content="{DynamicResource Lang.SelectRegion}" 
-                                                Style="{StaticResource ModernButton}" 
-                                                Margin="0,0,0,10" 
-                                                Click="SelectRegionButton_Click"/>
-                                        
-                                        <Button x:Name="ResetDataButton" 
-                                                Content="{DynamicResource Lang.ResetAnalytics}" 
-                                                Style="{StaticResource DangerButton}" 
-                                                Margin="0,0,0,0" 
-                                                Click="ResetDataButton_Click"/>
-                                    </StackPanel>
                                 </StackPanel>
                             </Border>
 
@@ -358,7 +347,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.7.2"
+                   Text="v1.8.0"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
