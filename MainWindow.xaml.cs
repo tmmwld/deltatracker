@@ -55,23 +55,6 @@ namespace DeltaForceTracker
                 // Load saved settings (region, language)
                 LoadSettings();
                 
-                // Register F8 global hotkey (fixed, no customization needed)
-                System.Diagnostics.Debug.WriteLine("Registering F8 global hotkey");
-                
-                _f8Hotkey = new F8Hotkey(this);
-                _f8Hotkey.HotkeyPressed += Hotkey_Pressed;
-                
-                if (_f8Hotkey.Register())
-                {
-                    UpdateStatus("F8 hotkey registered");
-                    System.Diagnostics.Debug.WriteLine("✓ F8 hotkey registered successfully");
-                }
-                else
-                {
-                    UpdateStatus("Failed to register F8 hotkey");
-                    System.Diagnostics.Debug.WriteLine("✗ Failed to register F8 hotkey");
-                }
-                
                 // Load initial data
                 RefreshDashboard();
                 RefreshAnalytics();
@@ -82,12 +65,40 @@ namespace DeltaForceTracker
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
                 
-                // Mark as initialized - allow MouseHotkeyChanged events now
+                // Mark as initialized
                 _isInitialized = true;
+                System.Diagnostics.Debug.WriteLine("✓ MainWindow initialization complete");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error during initialization: {ex.Message}", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            
+            try
+            {
+                // Register F8 hotkey AFTER window handle is ready
+                System.Diagnostics.Debug.WriteLine("Registering F8 global hotkey");
+                
+                _f8Hotkey = new F8Hotkey(this);
+                _f8Hotkey.HotkeyPressed += Hotkey_Pressed;
+                
+                if (_f8Hotkey.Register())
+                {
+                    System.Diagnostics.Debug.WriteLine("✓ F8 hotkey registered successfully");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("✗ Failed to register F8 hotkey");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"✗ F8 hotkey registration error: {ex.Message}");
             }
         }
 
