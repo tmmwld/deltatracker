@@ -30,7 +30,6 @@ namespace DeltaForceTracker
         private Rectangle? _scanRegion;
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
-        private bool _isInitialized = false;
         private Views.FloatingScanButton? _floatingButton;
 
         public MainWindow()
@@ -75,8 +74,6 @@ namespace DeltaForceTracker
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
                 
-                // Mark as initialized
-                _isInitialized = true;
                 System.Diagnostics.Debug.WriteLine("✓ MainWindow initialization complete");
             }
             catch (Exception ex)
