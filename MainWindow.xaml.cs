@@ -31,6 +31,7 @@ namespace DeltaForceTracker
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
         private bool _isInitialized = false;
+        private Views.FloatingScanButton? _floatingButton;
 
         public MainWindow()
         {
@@ -100,6 +101,7 @@ namespace DeltaForceTracker
                 SaveSettings();
                 
                 // Dispose all resources in proper order
+                _floatingButton?.Close();
                 _mouseHook?.Dispose();
                 _ocrEngine?.Dispose();
                 _quoteService?.Dispose();
@@ -147,6 +149,10 @@ namespace DeltaForceTracker
             {
                 Mouse4Radio.IsChecked = true;
             }
+            
+            // Load Floating Button preference
+            var floatingEnabled = _dbManager.GetSetting("FloatingButtonEnabled") == "true";
+            FloatingButtonToggle.IsChecked = floatingEnabled;
         }
 
         private void SaveSettings()
@@ -586,6 +592,23 @@ namespace DeltaForceTracker
                 UpdateStatus("Failed to register new mouse hotkey");
                 System.Diagnostics.Debug.WriteLine($"✗ Failed to change Raw Input hotkey to {selectedButton}");
             }
+        }
+
+        private void FloatingButtonToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_floatingButton == null)
+            {
+                _floatingButton = new Views.FloatingScanButton();
+                _floatingButton.ScanRequested += (s, args) => PerformScan();
+            }
+            _floatingButton.Show();
+            _dbManager.SaveSetting("FloatingButtonEnabled", "true");
+        }
+
+        private void FloatingButtonToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _floatingButton?.Hide();
+            _dbManager.SaveSetting("FloatingButtonEnabled", "false");
         }
 
         private void UpdateStatus(string message)

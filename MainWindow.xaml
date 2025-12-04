@@ -150,6 +150,16 @@
                                                  Cursor="Hand"
                                                  Margin="0,0,0,10"/>
                                     
+                                    <CheckBox x:Name="FloatingButtonToggle"
+                                              Content="{DynamicResource Lang.FloatingButton}"
+                                              FontFamily="{StaticResource MainFont}"
+                                              FontSize="12"
+                                              Foreground="{StaticResource TextSecondaryBrush}"
+                                              Cursor="Hand"
+                                              Margin="0,5,0,10"
+                                              Checked="FloatingButtonToggle_Checked"
+                                              Unchecked="FloatingButtonToggle_Unchecked"/>
+                                    
                                     <Separator Margin="0,5,0,10" Background="{StaticResource BorderBrush}"/>
                                     
                                     <StackPanel Orientation="Vertical">
@@ -348,7 +358,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.7.0"
+                   Text="v1.7.1"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
