@@ -115,7 +115,7 @@ namespace DeltaForceTracker
                 LoadRandomQuote();
 
                 // Premium entrance animations for dashboard cards (after initialization)
-                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
+                AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, ActionsCard, QuoteCard);
                 
                 DiagnosticLogger.Log("✓ MainWindow initialization complete");
                 DiagnosticLogger.Log("=== MAINWINDOW_LOADED END ===");
