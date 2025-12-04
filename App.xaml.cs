@@ -1,3 +1,4 @@
+using System;
 using System.Linq; // Added for FirstOrDefault
 using System.Windows;
 using DeltaForceTracker.Utils;
