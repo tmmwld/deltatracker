@@ -119,16 +119,16 @@
                         <Border x:Name="ActionsCard" Style="{StaticResource Card}" Margin="0,10,0,10" Padding="20">
                             <StackPanel>
                                 <!-- Header with integrated status -->
-                                <TextBlock Margin="0,0,0,20">
-                                    <Run Text="{DynamicResource Lang.Actions}" 
-                                         Style="{StaticResource LabelText}"/>
-                                    <Run Text=" • " 
-                                         Foreground="{StaticResource TextSecondaryBrush}" 
-                                         FontSize="14"/>
+                                <TextBlock Margin="0,0,0,20"
+                                          FontFamily="{StaticResource MainFont}"
+                                          FontSize="14"
+                                          FontWeight="SemiBold"
+                                          Foreground="{StaticResource TextSecondaryBrush}">
+                                    <Run Text="{DynamicResource Lang.Actions}"/>
+                                    <Run Text=" • "/>
                                     <Run x:Name="StatusTextInline" 
                                          Text="{DynamicResource Lang.Status.Ready}"
-                                         Foreground="{StaticResource AccentBrush}"
-                                         FontSize="14"/>
+                                         Foreground="{StaticResource AccentBrush}"/>
                                 </TextBlock>
                                 
                                 <!-- Action Buttons (Horizontal Layout) -->
