@@ -25,7 +25,6 @@
     <s:String x:Key="Lang.GlobalHotkey">GLOBAL HOTKEY (Triple-Click)</s:String>
     <s:String x:Key="Lang.MouseButton4">Mouse Button 4 (x3)</s:String>
     <s:String x:Key="Lang.MouseButton5">Mouse Button 5 (x3)</s:String>
-    <s:String x:Key="Lang.FloatingButton">Show Floating Scan Button</s:String>
     
     <!-- Analytics Cards -->
     <s:String x:Key="Lang.BalanceHistory">BALANCE HISTORY</s:String>
