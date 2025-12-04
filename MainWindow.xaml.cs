@@ -529,7 +529,47 @@ namespace DeltaForceTracker
         {
             if (scans.Count == 0) return;
 
-            var values = scans.Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue)).ToList();
+            // Calculate timespan
+            var firstScan = scans.Min(s => s.Timestamp);
+            var lastScan = scans.Max(s => s.Timestamp);
+            var timespan = lastScan - firstScan;
+
+            // Prepare data based on timespan
+            List<DateTimePoint> chartData;
+            string labelFormat;
+
+            if (timespan.TotalDays < 1)
+            {
+                // Less than 1 day - show all scans with hour:minute
+                chartData = scans.Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue)).ToList();
+                labelFormat = "HH:mm";
+            }
+            else if (timespan.TotalDays <= 7)
+            {
+                // 1-7 days - show all scans with date and time
+                chartData = scans.Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue)).ToList();
+                labelFormat = "MM/dd HH:mm";
+            }
+            else if (timespan.TotalDays <= 30)
+            {
+                // 7-30 days - sample to ~50 points
+                int step = Math.Max(1, scans.Count / 50);
+                chartData = scans.Where((s, i) => i % step == 0)
+                                .Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue))
+                                .ToList();
+                labelFormat = "MM/dd";
+            }
+            else
+            {
+                // 30+ days - aggregate by day, show daily average
+                chartData = scans.GroupBy(s => s.Timestamp.Date)
+                                .Select(g => new DateTimePoint(
+                                    g.Key,
+                                    (double)g.Average(s => s.NumericValue)
+                                ))
+                                .ToList();
+                labelFormat = "MM/dd";
+            }
 
             // Neon Cyan Color
             var neonCyan = SKColor.Parse("#00F0FF");
@@ -539,7 +579,7 @@ namespace DeltaForceTracker
             {
                 new LineSeries<DateTimePoint>
                 {
-                    Values = values,
+                    Values = chartData,
                     Fill = new SolidColorPaint(neonCyan.WithAlpha(30)), // Transparent fill
                     Stroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
                     GeometrySize = 8,
@@ -554,7 +594,7 @@ namespace DeltaForceTracker
             {
                 new Axis
                 {
-                    Labeler = value => new DateTime((long)value).ToString("MM/dd HH:mm"),
+                    Labeler = value => new DateTime((long)value).ToString(labelFormat),
                     LabelsPaint = new SolidColorPaint(SKColors.LightGray),
                     TextSize = 12,
                     SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20))
@@ -644,7 +684,7 @@ namespace DeltaForceTracker
 
         private void UpdateStatus(string message)
         {
-            StatusText.Text = message;
+            StatusTextInline.Text = message;
         }
     }
 
