@@ -1,5 +1,6 @@
 using System.Linq; // Added for FirstOrDefault
 using System.Windows;
+using DeltaForceTracker.Utils;
 
 namespace DeltaForceTracker
 {
@@ -7,23 +8,86 @@ namespace DeltaForceTracker
     {
         public static App Instance => (App)Current;
 
+        public App()
+        {
+            DiagnosticLogger.ClearLog(); // Start fresh
+            DiagnosticLogger.Log("=== APP CONSTRUCTOR START ===");
+            
+            try
+            {
+                InitializeComponent();
+                DiagnosticLogger.Log("✓ InitializeComponent() completed");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("App.InitializeComponent", ex);
+                throw;
+            }
+            
+            DiagnosticLogger.Log("=== APP CONSTRUCTOR END ===");
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-            // Load default language (English) or saved preference
-            // For now default to English, we can load from settings later
-            ChangeLanguage("en");
+            DiagnosticLogger.Log("=== ONSTARTUP START ===");
             
-            // Handle global exceptions
-            DispatcherUnhandledException += (sender, args) =>
+            // Global unhandled exception handlers
+            AppDomainUnhandledExceptionHandler();
+            DispatcherUnhandledExceptionHandler();
+            
+            try
             {
+                base.OnStartup(e);
+                DiagnosticLogger.Log("✓ base.OnStartup completed");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("base.OnStartup", ex);
+                throw;
+            }
+            
+            try
+            {
+                // Load default language (English) or saved preference
+                ChangeLanguage("en");
+                DiagnosticLogger.Log("✓ ChangeLanguage completed");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("ChangeLanguage", ex);
+                throw;
+            }
+            
+            DiagnosticLogger.Log("=== ONSTARTUP END ===");
+        }
+
+        private void AppDomainUnhandledExceptionHandler()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+            {
+                var ex = args.ExceptionObject as Exception;
+                DiagnosticLogger.LogException("AppDomain.UnhandledException", ex);
+                DiagnosticLogger.Log($"IsTerminating: {args.IsTerminating}");
+            };
+        }
+
+        private void DispatcherUnhandledExceptionHandler()
+        {
+            DispatcherUnhandledException += (s, args) =>
+            {
+                DiagnosticLogger.LogException("Dispatcher.UnhandledException", args.Exception);
+                
+                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var logPath = System.IO.Path.Combine(appData, "DeltaForceTracker", "crash.log");
+                
                 MessageBox.Show(
-                    $"An error occurred: {args.Exception.Message}",
-                    "Error",
+                    $"Application startup error:\n\n{args.Exception.Message}\n\nLog file:\n{logPath}",
+                    "Startup Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                args.Handled = true;
+                
+                args.Handled = true; // Prevent crash
             };
         }
 

@@ -34,18 +34,61 @@ namespace DeltaForceTracker
 
         public MainWindow()
         {
-            InitializeComponent();
+            DiagnosticLogger.Log("=== MAINWINDOW CONSTRUCTOR START ===");
             
-            _dbManager = new DatabaseManager();
-            _ocrEngine = new TesseractOCREngine();
-            _quoteService = new QuoteService();
+            try
+            {
+                InitializeComponent();
+                DiagnosticLogger.Log("✓ MainWindow.InitializeComponent completed");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("MainWindow.InitializeComponent", ex);
+                throw;
+            }
+            
+            try
+            {
+                _dbManager = new DatabaseManager();
+                DiagnosticLogger.Log("✓ DatabaseManager created");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("DatabaseManager creation", ex);
+                throw;
+            }
+            
+            try
+            {
+                _ocrEngine = new TesseractOCREngine();
+                DiagnosticLogger.Log("✓ TesseractOCREngine created");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("TesseractOCREngine creation", ex);
+                throw;
+            }
+            
+            try
+            {
+                _quoteService = new QuoteService();
+                DiagnosticLogger.Log("✓ QuoteService created");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("QuoteService creation", ex);
+                throw;
+            }
             
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
+            
+            DiagnosticLogger.Log("=== MAINWINDOW CONSTRUCTOR END ===");
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            DiagnosticLogger.Log("=== MAINWINDOW_LOADED START ===");
             try
             {
                 // Initialize OCR engine (may fail if tessdata missing)
@@ -74,12 +117,14 @@ namespace DeltaForceTracker
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, StatusCard, ActionsCard, QuoteCard);
                 
-                System.Diagnostics.Debug.WriteLine("✓ MainWindow initialization complete");
+                DiagnosticLogger.Log("✓ MainWindow initialization complete");
+                DiagnosticLogger.Log("=== MAINWINDOW_LOADED END ===");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"✗ MainWindow_Loaded error: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                DiagnosticLogger.Log($"✗ MainWindow_Loaded error: {ex.Message}");
+                DiagnosticLogger.Log($"Stack trace: {ex.StackTrace}");
+                DiagnosticLogger.LogException("MainWindow_Loaded", ex);
                 MessageBox.Show($"Error during initialization: {ex.Message}\n\nStack trace:\n{ex.StackTrace}", 
                     "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
