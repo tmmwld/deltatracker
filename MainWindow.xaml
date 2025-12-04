@@ -347,7 +347,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.8.3"
+                   Text="v1.8.4"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"
