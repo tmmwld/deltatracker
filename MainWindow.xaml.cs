@@ -49,8 +49,18 @@ namespace DeltaForceTracker
         {
             try
             {
-                // Initialize OCR engine
-                _ocrEngine.Initialize();
+                // Initialize OCR engine (may fail if tessdata missing)
+                try
+                {
+                    _ocrEngine.Initialize();
+                    System.Diagnostics.Debug.WriteLine("✓ OCR engine initialized");
+                }
+                catch (Exception ocrEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠ OCR initialization failed: {ocrEx.Message}");
+                    UpdateStatus("OCR not available - tessdata missing");
+                    // App can still run without OCR (for testing)
+                }
                 
                 // Load saved settings (region, language)
                 LoadSettings();
@@ -71,7 +81,10 @@ namespace DeltaForceTracker
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error during initialization: {ex.Message}", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"✗ MainWindow_Loaded error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                MessageBox.Show($"Error during initialization: {ex.Message}\n\nStack trace:\n{ex.StackTrace}", 
+                    "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -93,12 +106,15 @@ namespace DeltaForceTracker
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("✗ Failed to register F8 hotkey");
+                    System.Diagnostics.Debug.WriteLine("⚠ F8 hotkey failed to register (may be already in use)");
+                    // Don't crash - app still usable with floating button
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"✗ F8 hotkey registration error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                // Silently fail - app still usable without F8 hotkey
             }
         }
 
