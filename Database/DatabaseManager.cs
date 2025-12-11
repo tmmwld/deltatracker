@@ -51,6 +51,16 @@ namespace DeltaForceTracker.Database
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Timestamp TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS CheaterEvents (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Timestamp TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS RedItemEvents (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Timestamp TEXT NOT NULL
+                );
             ";
             command.ExecuteNonQuery();
         }
@@ -394,6 +404,11 @@ namespace DeltaForceTracker.Database
             return result != null ? Convert.ToInt32(result) : 0;
         }
 
+        public int GetTotalTilts()
+        {
+            return GetTiltCount(); // Reuse existing method
+        }
+
         public List<TiltEvent> GetTiltsForDateRange(DateTime start, DateTime end)
         {
             var tilts = new List<TiltEvent>();
@@ -422,6 +437,142 @@ namespace DeltaForceTracker.Database
             }
 
             return tilts;
+        }
+
+        // Cheater Event Methods
+        public void RecordCheater(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT INTO CheaterEvents (Timestamp)
+                VALUES ($timestamp)
+            ";
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        public void UndoCheater(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                DELETE FROM CheaterEvents
+                WHERE Id = (
+                    SELECT Id FROM CheaterEvents
+                    WHERE DATE(Timestamp) = DATE($date)
+                    ORDER BY Timestamp DESC
+                    LIMIT 1
+                )
+            ";
+            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd"));
+            command.ExecuteNonQuery();
+        }
+
+        public int GetTotalCheaters()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM CheaterEvents";
+            
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public int GetDailyCheaterCount(DateTime date)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM CheaterEvents 
+                WHERE DATE(Timestamp) = DATE($date)
+            ";
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        // Red Item Event Methods
+        public void RecordRedItem(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT INTO RedItemEvents (Timestamp)
+                VALUES ($timestamp)
+            ";
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        public void UndoRedItem(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                DELETE FROM RedItemEvents
+                WHERE Id = (
+                    SELECT Id FROM RedItemEvents
+                    WHERE DATE(Timestamp) = DATE($date)
+                    ORDER BY Timestamp DESC
+                    LIMIT 1
+                )
+            ";
+            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd"));
+            command.ExecuteNonQuery();
+        }
+
+        public int GetTotalRedItems()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM RedItemEvents";
+            
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public int GetDailyRedItemCount(DateTime date)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM RedItemEvents 
+                WHERE DATE(Timestamp) = DATE($date)
+            ";
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        // Combined counter stats for Best Day
+        public (int cheaters, int tilts, int reds) GetCountersForDate(DateTime date)
+        {
+            return (
+                GetDailyCheaterCount(date),
+                GetDailyTiltCount(date),
+                GetDailyRedItemCount(date)
+            );
         }
 
         public void Dispose()

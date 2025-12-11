@@ -287,6 +287,47 @@ namespace DeltaForceTracker
             
             // Refresh analytics to update counters
             RefreshAnalytics();
+            RefreshDashboard();
+        }
+
+        private void CheaterButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Play feedback animation
+            AnimationHelper.TiltButtonFeedback(CheaterButton);
+            
+            // Record cheater event
+            _dbManager.RecordCheater(DateTime.Now);
+            
+            // Refresh to update counters
+            RefreshAnalytics();
+            RefreshDashboard();
+        }
+
+        private void UndoCheaterButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            _dbManager.UndoCheater(DateTime.Now);
+            RefreshAnalytics();
+            RefreshDashboard();
+        }
+
+        private void RedButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Play feedback animation
+            AnimationHelper.TiltButtonFeedback(RedButton);
+            
+            // Record red item event
+            _dbManager.RecordRedItem(DateTime.Now);
+            
+            // Refresh to update counters
+            RefreshAnalytics();
+            RefreshDashboard();
+        }
+
+        private void UndoRedButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            _dbManager.UndoRedItem(DateTime.Now);
+            RefreshAnalytics();
+            RefreshDashboard();
         }
 
         private void PerformScan()
@@ -479,6 +520,13 @@ namespace DeltaForceTracker
             {
                 LastScanText.Text = App.Instance.GetString("Lang.Status.NoScans");
             }
+
+            // Update today counters
+            var cheaters = _dbManager.GetDailyCheaterCount(today);
+            var tilts = _dbManager.GetDailyTiltCount(today);
+            var reds = _dbManager.GetDailyRedItemCount(today);
+            
+            TodayCountersText.Text = $"Cheaters {cheaters} | Tilts {tilts} | Reds {reds}";
         }
 
         private void RefreshAnalytics()
@@ -514,6 +562,11 @@ namespace DeltaForceTracker
             
             var todayTilts = _dbManager.GetDailyTiltCount(DateTime.Today);
             TodayTiltsText.Text = todayTilts.ToString();
+
+            // Update event counter totals
+            TotalTiltsCard.Text = _dbManager.GetTotalTilts().ToString();
+            TotalCheatersText.Text = _dbManager.GetTotalCheaters().ToString();
+            TotalRedsText.Text = _dbManager.GetTotalRedItems().ToString();
 
             // Update history grid with delta calculation
             var recentScans = _dbManager.GetRecentScans(50);

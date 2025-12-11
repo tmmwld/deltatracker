@@ -61,4 +61,12 @@
     <s:String x:Key="Lang.Analytics.Tilts">TILTS</s:String>
     <s:String x:Key="Lang.Analytics.TodayTilts">Today</s:String>
     
+    <!-- Event Counters -->
+    <s:String x:Key="Lang.Cheater">+ Cheater 🎭</s:String>
+    <s:String x:Key="Lang.Red">+ Red 🔴</s:String>
+    <s:String x:Key="Lang.Undo">Undo</s:String>
+    <s:String x:Key="Lang.TotalCheaters">TOTAL CHEATERS</s:String>
+    <s:String x:Key="Lang.TotalReds">TOTAL REDS</s:String>
+    <s:String x:Key="Lang.TotalTilts">TOTAL TILTS</s:String>
+    
 </ResourceDictionary>

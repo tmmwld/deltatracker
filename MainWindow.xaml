@@ -111,6 +111,16 @@
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="{DynamicResource Lang.DailyPL}" Style="{StaticResource LabelText}"/>
                                     <TextBlock x:Name="DailyPLText" Text="+0.00M" FontSize="42" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
+                                    
+                                    <!-- Today Counters -->
+                                    <TextBlock x:Name="TodayCountersText"
+                                               Text="Cheaters 0 | Tilts 0 | Reds 0"
+                                               FontFamily="{StaticResource MainFont}"
+                                               FontSize="11"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,10,0,0"
+                                               TextWrapping="Wrap"
+                                               HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -241,15 +251,64 @@
                             </Grid>
                         </Border>
 
-                        <!-- "I'm Tilted" Button - Bottom Center -->
-                        <Border HorizontalAlignment="Center" Margin="0,30,0,0">
-                            <Button x:Name="TiltButton"
-                                    Content="{DynamicResource Lang.TiltButton}"
-                                    Style="{StaticResource TiltButton}"
-                                    Width="250"
-                                    Height="60"
-                                    Click="TiltButton_Click"/>
-                        </Border>
+                        <!-- Event Counters Row - Bottom Center -->
+                        <Grid HorizontalAlignment="Center" Margin="0,30,0,0" MaxWidth="800">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Cheater Counter -->
+                            <StackPanel Grid.Column="0">
+                                <Button x:Name="CheaterButton"
+                                        Content="{DynamicResource Lang.Cheater}"
+                                        Style="{StaticResource ModernButton}"
+                                        Height="60"
+                                        MinWidth="200"
+                                        Click="CheaterButton_Click"/>
+                                <TextBlock x:Name="UndoCheaterButton"
+                                           Text="{DynamicResource Lang.Undo}"
+                                           FontFamily="{StaticResource MainFont}"
+                                           FontSize="10"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,5,0,0"
+                                           Cursor="Hand"
+                                           MouseLeftButtonUp="UndoCheaterButton_Click"/>
+                            </StackPanel>
+                            
+                            <!-- Tilt Counter (Existing, no Undo) -->
+                            <StackPanel Grid.Column="2">
+                                <Button x:Name="TiltButton"
+                                        Content="{DynamicResource Lang.TiltButton}"
+                                        Style="{StaticResource TiltButton}"
+                                        Height="60"
+                                        MinWidth="200"
+                                        Click="TiltButton_Click"/>
+                            </StackPanel>
+                            
+                            <!-- Red Items Counter -->
+                            <StackPanel Grid.Column="4">
+                                <Button x:Name="RedButton"
+                                        Content="{DynamicResource Lang.Red}"
+                                        Style="{StaticResource ModernButton}"
+                                        Height="60"
+                                        MinWidth="200"
+                                        Click="RedButton_Click"/>
+                                <TextBlock x:Name="UndoRedButton"
+                                           Text="{DynamicResource Lang.Undo}"
+                                           FontFamily="{StaticResource MainFont}"
+                                           FontSize="10"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,5,0,0"
+                                           Cursor="Hand"
+                                           MouseLeftButtonUp="UndoRedButton_Click"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -327,6 +386,63 @@
                             </Border>
                         </Grid>
 
+                        <!-- Event Counters Row -->
+                        <Grid Margin="0,20,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Total Tilts Card -->
+                            <Border Style="{StaticResource Card}" Grid.Column="0" Margin="0,0,10,0" Padding="20">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource Lang.TotalTilts}" 
+                                               Style="{StaticResource LabelText}"
+                                               FontSize="11"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TotalTiltsCard" 
+                                               Text="0" 
+                                               FontSize="32" 
+                                               FontWeight="Bold" 
+                                               Foreground="#FF1744"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Cheaters Card -->
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,10,0" Padding="20">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource Lang.TotalCheaters}" 
+                                               Style="{StaticResource LabelText}"
+                                               FontSize="11"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TotalCheatersText" 
+                                               Text="0" 
+                                               FontSize="32" 
+                                               FontWeight="Bold" 
+                                               Foreground="{StaticResource ErrorBrush}"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Reds Card -->
+                            <Border Style="{StaticResource Card}" Grid.Column="2" Margin="10,0,0,0" Padding="20">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource Lang.TotalReds}" 
+                                               Style="{StaticResource LabelText}"
+                                               FontSize="11"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TotalRedsText" 
+                                               Text="0" 
+                                               FontSize="32" 
+                                               FontWeight="Bold" 
+                                               Foreground="{StaticResource AccentBrush}"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
                         <!-- History Table -->
                         <Border Style="{StaticResource Card}">
                             <StackPanel>
@@ -368,7 +484,7 @@
         <!-- Version Label - Bottom Right -->
         <TextBlock Grid.Row="1" 
                    x:Name="VersionLabel"
-                   Text="v1.8.8"
+                   Text="v1.8.9"
                    FontSize="9"
                    Foreground="{StaticResource TextSecondaryBrush}"
                    Opacity="0.5"

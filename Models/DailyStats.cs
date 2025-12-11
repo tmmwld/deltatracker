@@ -4,11 +4,14 @@ namespace DeltaForceTracker.Models
 {
     public class DailyStats
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
-        public decimal StartingBalance { get; set; }
-        public decimal CurrentBalance { get; set; }
-        public decimal ProfitLoss => CurrentBalance - StartingBalance;
-        public int ScanCount { get; set; }
+        public decimal StartBalance { get; set; }
+        public decimal EndBalance { get; set; }
+        public decimal ProfitLoss { get; set; }
+        public int Tilts { get; set; }
+        public int Cheaters { get; set; }
+        public int RedItems { get; set; }
         public decimal HighestBalance { get; set; }
         public decimal LowestBalance { get; set; }
     }

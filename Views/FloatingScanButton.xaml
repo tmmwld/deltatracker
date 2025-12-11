@@ -15,7 +15,7 @@
             BorderBrush="#00FF88" 
             BorderThickness="2" 
             CornerRadius="25"
-            Opacity="0.4"
+            Opacity="0.15"
             MouseEnter="Border_MouseEnter"
             MouseLeave="Border_MouseLeave">
         
