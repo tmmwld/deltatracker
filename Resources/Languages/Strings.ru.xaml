@@ -61,8 +61,8 @@
     <s:String x:Key="Lang.Analytics.TodayTilts">Сегодня</s:String>
     
     <!-- Event Counters -->
-    <s:String x:Key="Lang.Cheater">+ Читер 🎭</s:String>
-    <s:String x:Key="Lang.Red">+ Red 🔴</s:String>
+    <s:String x:Key="Lang.Cheater">Читер!</s:String>
+    <s:String x:Key="Lang.Red">Красная!</s:String>
     <s:String x:Key="Lang.Undo">Отменить</s:String>
     <s:String x:Key="Lang.TotalCheaters">ВСЕГО ЧИТЕРОВ</s:String>
     <s:String x:Key="Lang.TotalReds">ВСЕГО REDS</s:String>

@@ -58,7 +58,10 @@ namespace DeltaForceTracker.Services
         public string GetRandomQuote()
         {
             if (_quotes.Count == 0)
-                return "Сегодня — хороший день чтобы win!";
+            {
+                var culture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+                return culture == "ru" ? "Сегодня — хороший день чтобы win!" : "Today is a good day to win!";
+            }
 
             // If all quotes have been shown, reset the pool
             if (_remainingQuotes.Count == 0)
@@ -78,14 +81,42 @@ namespace DeltaForceTracker.Services
 
         private List<string> GetDefaultQuotes()
         {
-            return new List<string>
+            // Get current culture
+            var culture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+            
+            if (culture == "ru")
             {
-                "Сегодня я снова вынесу. Или хотя бы вынесут меня — тоже результат.",
-                "Удача в Дельте — как лут: слышал, что существует, но не видел.",
-                "Главное — не победа, а красиво умереть.",
-                "Мой баланс тает, но зато настроение стабильное: тоже тает.",
-                "Если рейд прошёл спокойно — это не рейд, это баг."
-            };
+                return new List<string>
+                {
+                    "Сегодня я снова вынесу. Или хотя бы вынесут меня — тоже результат.",
+                    "Удача в Дельте — как лут: слышал, что существует, но не видел.",
+                    "Главное — не победа, а красиво умереть.",
+                    "Мой баланс тает, но зато настроение стабильное: тоже тает.",
+                    "Если рейд прошёл спокойно — это не рейд, это баг.",
+                    "Я не проигрываю. Я просто даю другим шанс почувствовать себя победителями.",
+                    "Победа — это когда ты хотя бы не последний.",
+                    "Дельта учит смирению. Каждый день.",
+                    "Сегодня я обязательно найду красную... В чужом рюкзаке.",
+                    "Главное не тильтануть. Упс, поздно."
+                };
+            }
+            else
+            {
+                // English quotes with British humor
+                return new List<string>
+                {
+                    "Today I shall triumph. Or at least die with dignity. Probably just die.",
+                    "Luck in Delta is like loot: theoretically exists, practically a myth.",
+                    "It's not about winning, it's about making your death look tactical.",
+                    "My balance is dropping faster than my K/D ratio.",
+                    "If the raid went smoothly, it wasn't a raid — it was a bug.",
+                    "I don't lose. I merely give others a fleeting moment of false hope.",
+                    "Victory is when you're not the first one dead. That's growth.",
+                    "Delta teaches humility. Repeatedly. Aggressively.",
+                    "Today I'll definitely find a red... in someone else's backpack.",
+                    "The key is not to tilt. Oh dear, too late."
+                };
+            }
         }
 
         private class QuoteData
