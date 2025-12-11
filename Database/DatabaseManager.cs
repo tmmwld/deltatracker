@@ -207,18 +207,23 @@ namespace DeltaForceTracker.Database
                 return new DailyStats
                 {
                     Date = date.Date,
-                    StartingBalance = 0,
-                    CurrentBalance = 0,
-                    ScanCount = 0
+                    StartBalance = 0,
+                    EndBalance = 0,
+                    ProfitLoss = 0,
+                    HighestBalance = 0,
+                    LowestBalance = 0
                 };
             }
+
+            var startBalance = scans[0].NumericValue;
+            var endBalance = scans[^1].NumericValue;
 
             return new DailyStats
             {
                 Date = date.Date,
-                StartingBalance = scans[0].NumericValue,
-                CurrentBalance = scans[^1].NumericValue,
-                ScanCount = scans.Count,
+                StartBalance = startBalance,
+                EndBalance = endBalance,
+                ProfitLoss = endBalance - startBalance,
                 HighestBalance = scans.Max(s => s.NumericValue),
                 LowestBalance = scans.Min(s => s.NumericValue)
             };
