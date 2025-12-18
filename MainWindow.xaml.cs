@@ -583,46 +583,38 @@ namespace DeltaForceTracker
         {
             if (scans.Count == 0) return;
 
-            // Calculate timespan
-            var firstScan = scans.Min(s => s.Timestamp);
-            var lastScan = scans.Max(s => s.Timestamp);
-            var timespan = lastScan - firstScan;
+            // Sort scans by timestamp to maintain chronological order
+            var sortedScans = scans.OrderBy(s => s.Timestamp).ToList();
+            
+            // Create index-based data points
+            // X = scan index (0, 1, 2, 3...), Y = balance value
+            var indexedData = sortedScans
+                .Select((scan, index) => new ObservablePoint(index, (double)scan.NumericValue))
+                .ToList();
 
-            // Prepare data based on timespan
-            List<DateTimePoint> chartData;
-            string labelFormat;
-
-            if (timespan.TotalDays < 1)
+            // Adaptive sampling for very large datasets (100+ scans)
+            // Keep all data points for better accuracy, but adjust visual density
+            List<ObservablePoint> chartData;
+            int labelStep;
+            
+            if (sortedScans.Count <= 50)
             {
-                // Less than 1 day - show all scans with hour:minute
-                chartData = scans.Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue)).ToList();
-                labelFormat = "HH:mm";
+                // Small dataset: show all points, show every ~5th label
+                chartData = indexedData;
+                labelStep = Math.Max(1, sortedScans.Count / 10);
             }
-            else if (timespan.TotalDays <= 7)
+            else if (sortedScans.Count <= 150)
             {
-                // 1-7 days - show all scans with date and time
-                chartData = scans.Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue)).ToList();
-                labelFormat = "MM/dd HH:mm";
-            }
-            else if (timespan.TotalDays <= 30)
-            {
-                // 7-30 days - sample to ~50 points
-                int step = Math.Max(1, scans.Count / 50);
-                chartData = scans.Where((s, i) => i % step == 0)
-                                .Select(s => new DateTimePoint(s.Timestamp, (double)s.NumericValue))
-                                .ToList();
-                labelFormat = "MM/dd";
+                // Medium dataset: show all points, show every ~10th label
+                chartData = indexedData;
+                labelStep = Math.Max(1, sortedScans.Count / 15);
             }
             else
             {
-                // 30+ days - aggregate by day, show daily average
-                chartData = scans.GroupBy(s => s.Timestamp.Date)
-                                .Select(g => new DateTimePoint(
-                                    g.Key,
-                                    (double)g.Average(s => s.NumericValue)
-                                ))
-                                .ToList();
-                labelFormat = "MM/dd";
+                // Large dataset: sample to ~100 points for performance
+                int step = sortedScans.Count / 100;
+                chartData = indexedData.Where((p, i) => i % step == 0).ToList();
+                labelStep = Math.Max(1, chartData.Count / 15);
             }
 
             // Neon Cyan Color
@@ -631,36 +623,55 @@ namespace DeltaForceTracker
 
             var series = new ISeries[]
             {
-                new LineSeries<DateTimePoint>
+                new LineSeries<ObservablePoint>
                 {
                     Values = chartData,
                     Fill = new SolidColorPaint(neonCyan.WithAlpha(30)), // Transparent fill
                     Stroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
-                    GeometrySize = 8,
+                    GeometrySize = sortedScans.Count <= 50 ? 8 : (sortedScans.Count <= 150 ? 6 : 4), // Smaller points for large datasets
                     GeometryStroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
                     GeometryFill = new SolidColorPaint(neonBlue),
-                    AnimationsSpeed = TimeSpan.FromMilliseconds(800) // Smooth drawing animation
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(800), // Smooth drawing animation
+                    LineSmoothness = 0.3 // Slight smoothing for better visual flow
                 }
             };
 
             BalanceChart.Series = series;
+            
+            // X-Axis: Scan indices with adaptive labeling
             BalanceChart.XAxes = new[]
             {
                 new Axis
                 {
-                    Labeler = value => new DateTime((long)value).ToString(labelFormat),
+                    Name = "Scan #",
+                    NamePaint = new SolidColorPaint(SKColors.LightGray) { SKTypeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold) },
+                    NameTextSize = 12,
+                    Labeler = value =>
+                    {
+                        int index = (int)value;
+                        // Show only first and last scan for clean visualization
+                        if (index == 0 || index == sortedScans.Count - 1)
+                            return $"#{index + 1}"; // Display as #1 and #N
+                        return "";
+                    },
                     LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                    TextSize = 12,
-                    SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20))
+                    TextSize = 11,
+                    SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20)),
+                    MinStep = 1 // Ensure integer steps
                 }
             };
+            
+            // Y-Axis: Balance values (unchanged)
             BalanceChart.YAxes = new[]
             {
                 new Axis
                 {
+                    Name = "Balance",
+                    NamePaint = new SolidColorPaint(SKColors.LightGray) { SKTypeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold) },
+                    NameTextSize = 12,
                     Labeler = value => ValueParser.FormatBalance((decimal)value),
                     LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                    TextSize = 12,
+                    TextSize = 11,
                     SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20))
                 }
             };
