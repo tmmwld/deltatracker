@@ -26,6 +26,15 @@
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
 
+    <!-- Card Brush: Gradient -->
+    <LinearGradientBrush x:Key="CardBrush" StartPoint="0,0" EndPoint="1,1" Opacity="0.4">
+        <GradientStop Color="#1E293B" Offset="0"/>
+        <GradientStop Color="#1A1F26" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Card Shadow Effect -->
+    <DropShadowEffect x:Key="CardShadow" Color="Black" BlurRadius="15" ShadowDepth="3" Opacity="0.4"/>
+
     <!-- Fonts: Tactical Typography -->
     <FontFamily x:Key="MainFont">Rajdhani, Segoe UI Variable Display, Segoe UI, Roboto, Arial</FontFamily>
     <FontFamily x:Key="MonoFont">Consolas, Courier New, monospace</FontFamily>
