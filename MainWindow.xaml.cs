@@ -841,20 +841,31 @@ namespace DeltaForceTracker
                 // Update progress text
                 AchievementProgressText.Text = $"{progress.unlocked} / {progress.total}";
 
-                // Bind to grid
-                var achievementViewModels = achievements.Select(a => new
-                {
-                    Id = a.Id,
-                    IconPath = a.GetIconPath(),
-                    DisplayTitle = a.GetDisplayTitle(_currentLanguage),
-                    IsUnlocked = a.IsUnlocked
-                }).ToList();
-
-                AchievementsGrid.ItemsSource = achievementViewModels;
+                // Bind to grid using ViewModel
+                var viewModels = achievements.Select(a => new ViewModels.AchievementViewModel(a, _currentLanguage)).ToList();
+                AchievementsGrid.ItemsSource = viewModels;
             }
             catch (Exception ex)
             {
                 DiagnosticLogger.LogException("RefreshAchievements", ex);
+            }
+        }
+        
+        private void ResetAchievementsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_achievementService == null) return;
+            
+            var result = MessageBox.Show(
+                _currentLanguage == "ru" ? "Сбросить все достижения?" : "Reset all achievements?",
+                "Debug",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+                
+            if (result == MessageBoxResult.Yes)
+            {
+                _achievementService.ResetAll();
+                RefreshAchievements();
+                MessageBox.Show("Achievements reset!", "Debug");
             }
         }
 

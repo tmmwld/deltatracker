@@ -571,5 +571,14 @@ namespace DeltaForceTracker.Services
             var unlocked = _dbManager.GetUnlockedAchievementCount();
             return (unlocked, 20); // 20 real achievements (ID 1-20, excluding 0)
         }
+        /// <summary>
+        /// Resets all achievements and counters. FOR DEBUGGING ONLY.
+        /// </summary>
+        public void ResetAll()
+        {
+            _dbManager.ResetAllAchievements();
+            _lockedAchievementTaps.Clear();
+            _lockedAchievementTapCounts.Clear();
+        }
     }
 }

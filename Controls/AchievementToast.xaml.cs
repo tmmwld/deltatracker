@@ -26,14 +26,19 @@ namespace DeltaForceTracker.Controls
             try
             {
                 var iconPath = achievement.GetIconPath();
-                AchIcon.Source = new BitmapImage(new Uri(iconPath, UriKind.Relative));
+                if (!iconPath.StartsWith("pack://"))
+                {
+                    iconPath = "pack://application:,,," + iconPath;
+                }
+                AchIcon.Source = new BitmapImage(new Uri(iconPath));
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback to locked icon if load fails
+                System.Diagnostics.Debug.WriteLine($"Error loading toast icon: {ex.Message}");
+                // Fallback
                 try
                 {
-                    AchIcon.Source = new BitmapImage(new Uri("/Resources/achievements/0_Locked.png", UriKind.Relative));
+                    AchIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/achievements/0_Locked.png"));
                 }
                 catch { }
             }

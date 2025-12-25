@@ -72,6 +72,8 @@
     <!-- Achievements -->
     <s:String x:Key="Lang.Achievements">Achievements</s:String>
     <s:String x:Key="Lang.Achievement.Unlocked">Achievement Unlocked!</s:String>
-    <s:String x:Key="Lang.SeeLatestVersion">See the latest version here</s:String>
+    <s:String x:Key="Lang.SeeLatestVersion">See latest version</s:String>
+    <s:String x:Key="Lang.Reset">Reset</s:String>
+    <s:String x:Key="Lang.Locked">Locked</s:String>
     
 </ResourceDictionary>

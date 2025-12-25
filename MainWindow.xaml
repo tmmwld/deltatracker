@@ -491,17 +491,39 @@
                                 Margin="0,0,0,20"
                                 Effect="{StaticResource CardShadow}">
                             <Grid>
-                                <TextBlock Text="{DynamicResource Lang.Achievements}" 
-                                          FontSize="24" 
-                                          FontWeight="Bold" 
-                                          Foreground="{StaticResource AccentBrush}"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource Lang.Achievements}" 
+                                              FontSize="24" 
+                                              FontWeight="Bold" 
+                                              Foreground="{StaticResource AccentBrush}"
+                                              VerticalAlignment="Center"/>
+                                              
+                                    <!-- Reset Debug Button -->
+                                    <Button x:Name="ResetAchievementsButton"
+                                            Content="{DynamicResource Lang.Reset}"
+                                            Width="60" Height="24"
+                                            Style="{StaticResource ScanButtonStyle}"
+                                            Background="#334155"
+                                            FontSize="10"
+                                            Margin="15,0,0,0"
+                                            Click="ResetAchievementsButton_Click"
+                                            Cursor="Hand"
+                                            VerticalAlignment="Center"/>
+                                </StackPanel>
+
                                 <TextBlock x:Name="AchievementProgressText"
                                           Text="0 / 20"
                                           FontSize="18"
                                           FontWeight="SemiBold"
                                           Foreground="{StaticResource TextSecondaryBrush}"
                                           HorizontalAlignment="Right"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"
+                                          Grid.Column="1"/>
                             </Grid>
                         </Border>
 
@@ -520,8 +542,10 @@
                                             CornerRadius="8"
                                             Effect="{StaticResource CardShadow}"
                                             Cursor="Hand"
-                                            MouseLeftButtonUp="Achievement_Click">
-                                        <StackPanel HorizontalAlignment="Center">
+                                            Opacity="{Binding Opacity}"
+                                            MouseLeftButtonUp="Achievement_Click"
+                                            ToolTip="{Binding DisplayDescription}">
+                                        <StackPanel HorizontalAlignment="Center" Width="100">
                                             <!-- Achievement Icon -->
                                             <Image Source="{Binding IconPath}"
                                                    Width="64" 
@@ -536,7 +560,15 @@
                                                       Foreground="{StaticResource TextPrimaryBrush}"
                                                       TextAlignment="Center"
                                                       TextWrapping="Wrap"
-                                                      MaxWidth="90"/>
+                                                      Margin="0,0,0,4"/>
+                                            
+                                            <!-- Valid Description Binding -->
+                                            <TextBlock Text="{Binding DisplayDescription}"
+                                                      FontSize="9"
+                                                      Foreground="{StaticResource TextSecondaryBrush}"
+                                                      TextAlignment="Center"
+                                                      TextWrapping="Wrap"
+                                                      Opacity="0.8"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

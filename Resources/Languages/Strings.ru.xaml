@@ -72,5 +72,6 @@
     <s:String x:Key="Lang.Achievements">Достижения</s:String>
     <s:String x:Key="Lang.Achievement.Unlocked">Достижение получено!</s:String>
     <s:String x:Key="Lang.SeeLatestVersion">Посмотреть последнюю версию</s:String>
-    
+    <s:String x:Key="Lang.Reset">Сброс</s:String>
+    <s:String x:Key="Lang.Locked">Закрыто</s:String>
 </ResourceDictionary>
