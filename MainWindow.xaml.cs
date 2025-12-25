@@ -327,6 +327,9 @@ namespace DeltaForceTracker
 
         private void CheaterButton_Click(object sender, RoutedEventArgs e)
         {
+            // Play cheater sound
+            SoundPlayer.PlayCheaterSound();
+            
             // Play feedback animation
             AnimationHelper.TiltButtonFeedback(CheaterButton);
             
@@ -358,6 +361,9 @@ namespace DeltaForceTracker
 
         private void RedButton_Click(object sender, RoutedEventArgs e)
         {
+            // Play red sound
+            SoundPlayer.PlayRedSound();
+            
             // Play feedback animation
             AnimationHelper.TiltButtonFeedback(RedButton);
             
