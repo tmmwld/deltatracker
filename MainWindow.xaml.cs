@@ -502,7 +502,7 @@ namespace DeltaForceTracker
         {
             if (_quoteService == null) return;
             
-            var newQuote = _quoteService.GetRandomQuote();
+            var newQuote = _quoteService.GetRandomQuote(_currentLanguage);
 
             if (animate)
             {

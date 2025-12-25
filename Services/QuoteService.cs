@@ -55,17 +55,18 @@ namespace DeltaForceTracker.Services
             _remainingQuotes = new List<string>(_quotes);
         }
 
-        public string GetRandomQuote()
+        public string GetRandomQuote(string language = "en")
         {
             if (_quotes.Count == 0)
             {
-                var culture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-                return culture == "ru" ? "Сегодня — хороший день чтобы win!" : "Today is a good day to win!";
+                return language == "ru" ? "Сегодня — хороший день чтобы win!" : "Today is a good day to win!";
             }
 
             // If all quotes have been shown, reset the pool
             if (_remainingQuotes.Count == 0)
             {
+                // Reload quotes for current language
+                _quotes = GetDefaultQuotes(language);
                 ResetQuotePool();
             }
 
@@ -79,12 +80,9 @@ namespace DeltaForceTracker.Services
             return quote;
         }
 
-        private List<string> GetDefaultQuotes()
+        private List<string> GetDefaultQuotes(string language = "en")
         {
-            // Get current culture
-            var culture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-            
-            if (culture == "ru")
+            if (language == "ru")
             {
                 return new List<string>
                 {
