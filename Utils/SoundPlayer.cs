@@ -15,6 +15,8 @@ namespace DeltaForceTracker.Utils
         private static MediaPlayer _scanPlayer = new MediaPlayer();
         private static List<MediaPlayer> _tiltPlayers = new List<MediaPlayer>();
         private static MediaPlayer _achPlayer = new MediaPlayer();
+        private static MediaPlayer _cheaterPlayer = new MediaPlayer();
+        private static MediaPlayer _redPlayer = new MediaPlayer();
         private static Random _random = new Random();
 
         static SoundPlayer()
@@ -54,6 +56,20 @@ namespace DeltaForceTracker.Utils
                 if (File.Exists(achPath))
                 {
                     _achPlayer.Open(new Uri(achPath, UriKind.Absolute));
+                }
+
+                // Load cheater sound
+                string cheaterPath = Path.Combine(sfxDir, "cheater.wav");
+                if (File.Exists(cheaterPath))
+                {
+                    _cheaterPlayer.Open(new Uri(cheaterPath, UriKind.Absolute));
+                }
+
+                // Load red sound
+                string redPath = Path.Combine(sfxDir, "red.wav");
+                if (File.Exists(redPath))
+                {
+                    _redPlayer.Open(new Uri(redPath, UriKind.Absolute));
                 }
             }
             catch (Exception ex)
@@ -122,6 +138,40 @@ namespace DeltaForceTracker.Utils
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error playing achievement sound: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Play cheater button sound
+        /// </summary>
+        public static void PlayCheaterSound()
+        {
+            try
+            {
+                _cheaterPlayer.Stop();
+                _cheaterPlayer.Position = TimeSpan.Zero;
+                _cheaterPlayer.Play();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error playing cheater sound: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Play red button sound
+        /// </summary>
+        public static void PlayRedSound()
+        {
+            try
+            {
+                _redPlayer.Stop();
+                _redPlayer.Position = TimeSpan.Zero;
+                _redPlayer.Play();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error playing red sound: {ex.Message}");
             }
         }
     }
