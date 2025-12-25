@@ -4,6 +4,8 @@
              Width="340" Height="90"
              Loaded="UserControl_Loaded">
     <UserControl.Resources>
+        <QuadraticEase x:Key="EaseOut" EasingMode="EaseOut"/>
+
         <!-- Slide-in animation -->
         <Storyboard x:Key="SlideInStoryboard">
             <DoubleAnimation Storyboard.TargetName="ToastBorder"
@@ -24,8 +26,6 @@
                            From="1" To="0"
                            Duration="0:0:0.4"/>
         </Storyboard>
-
-        <QuadraticEase x:Key="EaseOut" EasingMode="EaseOut"/>
     </UserControl.Resources>
 
     <Border x:Name="ToastBorder"

@@ -841,8 +841,11 @@ namespace DeltaForceTracker
                 // Update progress text
                 AchievementProgressText.Text = $"{progress.unlocked} / {progress.total}";
 
-                // Bind to grid using ViewModel
-                var viewModels = achievements.Select(a => new ViewModels.AchievementViewModel(a, _currentLanguage)).ToList();
+                // Bind to grid using ViewModel, excluding hidden ID 0
+                var viewModels = achievements
+                    .Where(a => a.Id != 0)
+                    .Select(a => new ViewModels.AchievementViewModel(a, _currentLanguage))
+                    .ToList();
                 AchievementsGrid.ItemsSource = viewModels;
             }
             catch (Exception ex)
@@ -909,25 +912,24 @@ namespace DeltaForceTracker
 
         private void Achievement_Click(object sender, MouseButtonEventArgs e)
         {
-            // Get achievement ID from data context
+            // Get achievement from data context (safe cast)
             var border = sender as Border;
-            if (border?.DataContext == null) return;
-
-            try
+            if (border?.DataContext is ViewModels.AchievementViewModel vm)
             {
-                var achievementId = (int)border.DataContext.GetType().GetProperty("Id")?.GetValue(border.DataContext)!;
-                var isUnlocked = (bool)border.DataContext.GetType().GetProperty("IsUnlocked")?.GetValue(border.DataContext)!;
-
-                // Only track taps on locked achievements (for Bruteforce achievement)
-                if (!isUnlocked)
+                try
                 {
-                    _achievementService?.OnLockedAchievementTapped(achievementId, DateTime.Now);
-                    RefreshAchievements();
+                    // Only track taps on locked achievements (for Bruteforce achievement)
+                    // Access Model directly since we have the ViewModel
+                    if (!vm.IsUnlocked)
+                    {
+                        _achievementService?.OnLockedAchievementTapped(vm.Model.Id, DateTime.Now);
+                        RefreshAchievements();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                DiagnosticLogger.LogException("Achievement_Click", ex);
+                catch (Exception ex)
+                {
+                    DiagnosticLogger.LogException("Achievement_Click", ex);
+                }
             }
         }
 
