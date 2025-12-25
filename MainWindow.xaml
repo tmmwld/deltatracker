@@ -505,18 +505,18 @@
                             </Grid>
                         </Border>
 
-                        <!-- Achievements Grid (5 columns x 4 rows) -->
+                        <!-- Achievements Grid (5 columns x Auto rows) -->
                         <ItemsControl x:Name="AchievementsGrid">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid Columns="5" Rows="4"/>
+                                    <UniformGrid Columns="5"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="{StaticResource CardBrush}"
-                                            Margin="8"
-                                            Padding="15"
+                                            Margin="5"
+                                            Padding="10"
                                             CornerRadius="8"
                                             Effect="{StaticResource CardShadow}"
                                             Cursor="Hand"
@@ -524,18 +524,19 @@
                                         <StackPanel HorizontalAlignment="Center">
                                             <!-- Achievement Icon -->
                                             <Image Source="{Binding IconPath}"
-                                                   Width="96" 
-                                                   Height="96"
-                                                   Margin="0,0,0,10"/>
+                                                   Width="64" 
+                                                   Height="64"
+                                                   Margin="0,0,0,8"
+                                                   RenderOptions.BitmapScalingMode="Fant"/>
                                             
                                             <!-- Achievement Title -->
                                             <TextBlock Text="{Binding DisplayTitle}"
-                                                      FontSize="13"
+                                                      FontSize="12"
                                                       FontWeight="SemiBold"
                                                       Foreground="{StaticResource TextPrimaryBrush}"
                                                       TextAlignment="Center"
                                                       TextWrapping="Wrap"
-                                                      MaxWidth="110"/>
+                                                      MaxWidth="100"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -544,6 +545,19 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            
+            <!-- Easter Egg: Heart of Africa (Hidden) -->
+            <Image x:Name="EasterEggHOA"
+                   Source="Resources/achievements/hoa.png"
+                   Width="32" Height="32"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,5,30"
+                   Grid.Row="1"
+                   Opacity="0.12"
+                   Cursor="Hand"
+                   MouseLeftButtonUp="EasterEggHOA_MouseLeftButtonUp"
+                   ToolTip="?"/>
         </TabControl>
 
         <!-- Easter Egg HOA - Hidden sprite in bottom-right -->
