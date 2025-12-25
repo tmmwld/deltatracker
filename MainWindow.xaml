@@ -479,17 +479,117 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+
+            <!-- Achievements Tab -->
+            <TabItem Header="{DynamicResource Lang.Achievements}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
+                    <StackPanel Margin="20">
+                        <!-- Progress Header -->
+                        <Border Background="{StaticResource CardBrush}" 
+                                Padding="20" 
+                                CornerRadius="8" 
+                                Margin="0,0,0,20"
+                                Effect="{StaticResource CardShadow}">
+                            <Grid>
+                                <TextBlock Text="{DynamicResource Lang.Achievements}" 
+                                          FontSize="24" 
+                                          FontWeight="Bold" 
+                                          Foreground="{StaticResource AccentBrush}"/>
+                                <TextBlock x:Name="AchievementProgressText"
+                                          Text="0 / 20"
+                                          FontSize="18"
+                                          FontWeight="SemiBold"
+                                          Foreground="{StaticResource TextSecondaryBrush}"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Achievements Grid (5 columns x 4 rows) -->
+                        <ItemsControl x:Name="AchievementsGrid">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="5" Rows="4"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource CardBrush}"
+                                            Margin="8"
+                                            Padding="15"
+                                            CornerRadius="8"
+                                            Effect="{StaticResource CardShadow}"
+                                            Cursor="Hand"
+                                            MouseLeftButtonUp="Achievement_Click">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <!-- Achievement Icon -->
+                                            <Image Source="{Binding IconPath}"
+                                                   Width="96" 
+                                                   Height="96"
+                                                   Margin="0,0,0,10"/>
+                                            
+                                            <!-- Achievement Title -->
+                                            <TextBlock Text="{Binding DisplayTitle}"
+                                                      FontSize="13"
+                                                      FontWeight="SemiBold"
+                                                      Foreground="{StaticResource TextPrimaryBrush}"
+                                                      TextAlignment="Center"
+                                                      TextWrapping="Wrap"
+                                                      MaxWidth="110"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
 
-        <!-- Version Label - Bottom Right -->
-        <TextBlock Grid.Row="1" 
-                   x:Name="VersionLabel"
-                   Text="v1.10"
-                   FontSize="9"
-                   Foreground="{StaticResource TextSecondaryBrush}"
-                   Opacity="0.5"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
-                   Margin="0,0,15,8"/>
+        <!-- Easter Egg HOA - Hidden sprite in bottom-right -->
+        <Image x:Name="EasterEggHOA"
+               Grid.Row="1"
+               Source="/Resources/achivements/hoa.png"
+               Width="32" 
+               Height="32"
+               Opacity="0.12"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Margin="0,0,20,35"
+               MouseLeftButtonUp="EasterEggHOA_Click"
+               Cursor="Hand"
+               Visibility="Visible"/>
+
+        <!-- Toast Container (top-right overlay) -->
+        <Grid x:Name="ToastContainer"
+              Grid.Row="1"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Top"
+              Margin="20,20,20,0"
+              IsHitTestVisible="False"/>
+
+        <!-- Version Label & Release Link - Bottom Right -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,15,8">
+            <TextBlock x:Name="VersionLabel"
+                       Text="v2.0.0"
+                       FontSize="9"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Opacity="0.5"
+                       TextAlignment="Right"/>
+            <TextBlock FontSize="8"
+                       Opacity="0.5"
+                       TextAlignment="Right"
+                       Margin="0,2,0,0">
+                <Hyperlink NavigateUri="https://github.com/tmmwld/deltatracker/releases"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           Foreground="{StaticResource TextSecondaryBrush}">
+                    <Run Text="{DynamicResource Lang.SeeLatestVersion}"/>
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Window>

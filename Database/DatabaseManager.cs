@@ -61,8 +61,66 @@ namespace DeltaForceTracker.Database
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Timestamp TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS Achievements (
+                    Id INTEGER PRIMARY KEY,
+                    IsUnlocked INTEGER DEFAULT 0,
+                    UnlockedAt TEXT
+                );
+
+                CREATE TABLE IF NOT EXISTS DailyCounters (
+                    Key TEXT PRIMARY KEY,
+                    Value INTEGER DEFAULT 0,
+                    LastUpdated TEXT
+                );
+
+                CREATE TABLE IF NOT EXISTS EasterEgg (
+                    Id INTEGER PRIMARY KEY DEFAULT 1,
+                    IsClicked INTEGER DEFAULT 0,
+                    ClickedAt TEXT
+                );
             ";
             command.ExecuteNonQuery();
+
+            // Initialize achievements if table is empty (first run or upgrade from v1.x)
+            InitializeAchievementsData(connection);
+        }
+
+        private void InitializeAchievementsData(SqliteConnection connection)
+        {
+            var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = "SELECT COUNT(*) FROM Achievements";
+            var count = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+            // Only initialize if table is empty (first run)
+            if (count == 0)
+            {
+                var insertCommand = connection.CreateCommand();
+                insertCommand.CommandText = @"
+                    INSERT INTO Achievements (Id, IsUnlocked, UnlockedAt)
+                    VALUES ($id, 0, NULL)
+                ";
+
+                // Create all 21 achievements as locked (IDs 0-20)
+                for (int i = 0; i <= 20; i++)
+                {
+                    insertCommand.Parameters.Clear();
+                    insertCommand.Parameters.AddWithValue("$id", i);
+                    insertCommand.ExecuteNonQuery();
+                }
+            }
+
+            // Initialize easter egg state if empty
+            var eggCheckCommand = connection.CreateCommand();
+            eggCheckCommand.CommandText = "SELECT COUNT(*) FROM EasterEgg";
+            var eggCount = Convert.ToInt32(eggCheckCommand.ExecuteScalar());
+
+            if (eggCount == 0)
+            {
+                var eggInsertCommand = connection.CreateCommand();
+                eggInsertCommand.CommandText = "INSERT INTO EasterEgg (Id, IsClicked, ClickedAt) VALUES (1, 0, NULL)";
+                eggInsertCommand.ExecuteNonQuery();
+            }
         }
 
         public void RecordScan(DateTime timestamp, string rawValue, decimal numericValue)
@@ -578,6 +636,154 @@ namespace DeltaForceTracker.Database
                 GetDailyTiltCount(date),
                 GetDailyRedItemCount(date)
             );
+        }
+
+        // Achievement Methods
+        public List<Achievement> GetAllAchievements()
+        {
+            var achievements = new List<Achievement>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT Id, IsUnlocked, UnlockedAt
+                FROM Achievements
+                ORDER BY Id ASC
+            ";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                achievements.Add(new Achievement
+                {
+                    Id = reader.GetInt32(0),
+                    IsUnlocked = reader.GetInt32(1) == 1,
+                    UnlockedAt = reader.IsDBNull(2) ? null : DateTime.Parse(reader.GetString(2))
+                });
+            }
+
+            return achievements;
+        }
+
+        public void UnlockAchievement(int id, DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE Achievements
+                SET IsUnlocked = 1, UnlockedAt = $timestamp
+                WHERE Id = $id AND IsUnlocked = 0
+            ";
+            command.Parameters.AddWithValue("$id", id);
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        public bool IsAchievementUnlocked(int id)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT IsUnlocked FROM Achievements WHERE Id = $id";
+            command.Parameters.AddWithValue("$id", id);
+
+            var result = command.ExecuteScalar();
+            return result != null && Convert.ToInt32(result) == 1;
+        }
+
+        public int GetUnlockedAchievementCount()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM Achievements WHERE IsUnlocked = 1";
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        // Daily Counter Methods
+        public void SetDailyCounter(string key, int value, DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT OR REPLACE INTO DailyCounters (Key, Value, LastUpdated)
+                VALUES ($key, $value, $timestamp)
+            ";
+            command.Parameters.AddWithValue("$key", key);
+            command.Parameters.AddWithValue("$value", value);
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        public int GetDailyCounter(string key)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT Value FROM DailyCounters WHERE Key = $key";
+            command.Parameters.AddWithValue("$key", key);
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public void IncrementDailyCounter(string key, DateTime timestamp)
+        {
+            var current = GetDailyCounter(key);
+            SetDailyCounter(key, current + 1, timestamp);
+        }
+
+        public void ResetAllDailyCounters(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE DailyCounters 
+                SET Value = 0, LastUpdated = $timestamp
+            ";
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
+        }
+
+        // Easter Egg Methods
+        public bool IsEasterEggClicked()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT IsClicked FROM EasterEgg WHERE Id = 1";
+
+            var result = command.ExecuteScalar();
+            return result != null && Convert.ToInt32(result) == 1;
+        }
+
+        public void MarkEasterEggClicked(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE EasterEgg
+                SET IsClicked = 1, ClickedAt = $timestamp
+                WHERE Id = 1
+            ";
+            command.Parameters.AddWithValue("$timestamp", timestamp.ToString("o"));
+            command.ExecuteNonQuery();
         }
 
         public void Dispose()

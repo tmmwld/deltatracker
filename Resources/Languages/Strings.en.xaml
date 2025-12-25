@@ -69,4 +69,9 @@
     <s:String x:Key="Lang.TotalReds">TOTAL REDS</s:String>
     <s:String x:Key="Lang.TotalTilts">TOTAL TILTS</s:String>
     
+    <!-- Achievements -->
+    <s:String x:Key="Lang.Achievements">Achievements</s:String>
+    <s:String x:Key="Lang.Achievement.Unlocked">Achievement Unlocked!</s:String>
+    <s:String x:Key="Lang.SeeLatestVersion">See the latest version here</s:String>
+    
 </ResourceDictionary>

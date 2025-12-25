@@ -32,6 +32,12 @@ namespace DeltaForceTracker
         private QuoteService? _quoteService;
         private string _currentLanguage = "en";
         private Views.FloatingScanButton? _floatingButton;
+        
+        // Achievement System
+        private Services.AchievementService? _achievementService;
+        private DateTime _appLaunchTime;
+        private Queue<Models.Achievement> _achievementToastQueue = new Queue<Models.Achievement>();
+        private bool _isShowingToast = false;
 
         public MainWindow()
         {
@@ -81,6 +87,19 @@ namespace DeltaForceTracker
                 throw;
             }
             
+            try
+            {
+                _achievementService = new Services.AchievementService(_dbManager);
+                _achievementService.AchievementUnlocked += OnAchievementUnlocked;
+                _appLaunchTime = DateTime.Now;
+                DiagnosticLogger.Log("✓ AchievementService created");
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("AchievementService creation", ex);
+                // Non-critical, continue
+            }
+            
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
             
@@ -111,9 +130,19 @@ namespace DeltaForceTracker
                 // Load initial data
                 RefreshDashboard();
                 RefreshAnalytics();
+                RefreshAchievements();
 
                 // Load Quote of the Day
                 LoadRandomQuote();
+                
+                // Initialize achievement system
+                _achievementService?.OnAppLaunched(_appLaunchTime);
+                
+                // Hide easter egg if already clicked
+                if (_dbManager.IsEasterEggClicked())
+                {
+                    EasterEggHOA.Visibility = Visibility.Collapsed;
+                }
 
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, ActionsCard, QuoteCard);
@@ -284,11 +313,16 @@ namespace DeltaForceTracker
             AnimationHelper.TiltButtonFeedback(TiltButton);
             
             // Record tilt event
-            _dbManager.RecordTilt(DateTime.Now);
+            var now = DateTime.Now;
+            _dbManager.RecordTilt(now);
+            
+            // Achievement: OnTiltPressed
+            _achievementService?.OnTiltPressed(now);
             
             // Refresh analytics to update counters
             RefreshAnalytics();
             RefreshDashboard();
+            RefreshAchievements();
         }
 
         private void CheaterButton_Click(object sender, RoutedEventArgs e)
@@ -297,18 +331,29 @@ namespace DeltaForceTracker
             AnimationHelper.TiltButtonFeedback(CheaterButton);
             
             // Record cheater event
-            _dbManager.RecordCheater(DateTime.Now);
+            var now = DateTime.Now;
+            _dbManager.RecordCheater(now);
+            
+            // Achievement: OnCheaterMarked
+            _achievementService?.OnCheaterMarked(now);
             
             // Refresh to update counters
             RefreshAnalytics();
             RefreshDashboard();
+            RefreshAchievements();
         }
 
         private void UndoCheaterButton_Click(object sender, MouseButtonEventArgs e)
         {
-            _dbManager.UndoCheater(DateTime.Now);
+            var now = DateTime.Now;
+            _dbManager.UndoCheater(now);
+            
+            // Achievement: OnCheaterUnmarked
+            _achievementService?.OnCheaterUnmarked(now);
+            
             RefreshAnalytics();
             RefreshDashboard();
+            RefreshAchievements();
         }
 
         private void RedButton_Click(object sender, RoutedEventArgs e)
@@ -317,11 +362,16 @@ namespace DeltaForceTracker
             AnimationHelper.TiltButtonFeedback(RedButton);
             
             // Record red item event
-            _dbManager.RecordRedItem(DateTime.Now);
+            var now = DateTime.Now;
+            _dbManager.RecordRedItem(now);
+            
+            // Achievement: OnRedPressed
+            _achievementService?.OnRedPressed(now);
             
             // Refresh to update counters
             RefreshAnalytics();
             RefreshDashboard();
+            RefreshAchievements();
         }
 
         private void UndoRedButton_Click(object sender, MouseButtonEventArgs e)
@@ -358,12 +408,19 @@ namespace DeltaForceTracker
                     var now = DateTime.Now;
                     _dbManager.RecordScan(now, result.rawValue, result.numericValue);
                     
+                    // Achievement: OnScanRecorded
+                    var allScans = _dbManager.GetAllScans();
+                    var currentScan = allScans.LastOrDefault();
+                    var previousScan = allScans.Count > 1 ? allScans[allScans.Count - 2] : null;
+                    _achievementService?.OnScanRecorded(currentScan!, previousScan);
+                    
                     // Play success sound
                     SoundPlayer.PlayScanSound();
                     
                     UpdateStatus($"Scan successful: {result.rawValue}");
                     RefreshDashboard();
                     RefreshAnalytics();
+                    RefreshAchievements();
                 }
                 else
                 {
@@ -434,6 +491,11 @@ namespace DeltaForceTracker
         private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
         {
             LoadRandomQuote(animate: true);
+            
+            // Achievement: OnQuoteRefreshed
+            _achievementService?.OnQuoteRefreshed(DateTime.Now);
+            
+            RefreshAchievements();
         }
 
         private void LoadRandomQuote(bool animate = false)
@@ -750,6 +812,126 @@ namespace DeltaForceTracker
         private void UpdateStatus(string message)
         {
             StatusTextInline.Text = message;
+        }
+
+        // ===== ACHIEVEMENT SYSTEM METHODS =====
+
+        private void RefreshAchievements()
+        {
+            if (_achievementService == null) return;
+
+            try
+            {
+                var achievements = _achievementService.GetAllAchievements();
+                var progress = _achievementService.GetProgress();
+
+                // Update progress text
+                AchievementProgressText.Text = $"{progress.unlocked} / {progress.total}";
+
+                // Bind to grid
+                var achievementViewModels = achievements.Select(a => new
+                {
+                    Id = a.Id,
+                    IconPath = a.GetIconPath(),
+                    DisplayTitle = a.GetDisplayTitle(_currentLanguage),
+                    IsUnlocked = a.IsUnlocked
+                }).ToList();
+
+                AchievementsGrid.ItemsSource = achievementViewModels;
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("RefreshAchievements", ex);
+            }
+        }
+
+        private void OnAchievementUnlocked(object? sender, Models.Achievement achievement)
+        {
+            // Queue toast for display
+            _achievementToastQueue.Enqueue(achievement);
+            
+            // Refresh UI
+            RefreshAchievements();
+            
+            // Start showing toasts if not already showing
+            if (!_isShowingToast)
+            {
+                ShowNextToast();
+            }
+        }
+
+        private async void ShowNextToast()
+        {
+            if (_achievementToastQueue.Count == 0)
+            {
+                _isShowingToast = false;
+                return;
+            }
+
+            _isShowingToast = true;
+            var achievement = _achievementToastQueue.Dequeue();
+
+            // Create toast control
+            var toast = new Controls.AchievementToast();
+            toast.ToastClosed += (s, e) =>
+            {
+                ToastContainer.Children.Remove(toast);
+                ShowNextToast(); // Show next in queue
+            };
+
+            ToastContainer.Children.Add(toast);
+            toast.Show(achievement, _currentLanguage);
+        }
+
+        private void Achievement_Click(object sender, MouseButtonEventArgs e)
+        {
+            // Get achievement ID from data context
+            var border = sender as Border;
+            if (border?.DataContext == null) return;
+
+            try
+            {
+                var achievementId = (int)border.DataContext.GetType().GetProperty("Id")?.GetValue(border.DataContext)!;
+                var isUnlocked = (bool)border.DataContext.GetType().GetProperty("IsUnlocked")?.GetValue(border.DataContext)!;
+
+                // Only track taps on locked achievements (for Bruteforce achievement)
+                if (!isUnlocked)
+                {
+                    _achievementService?.OnLockedAchievementTapped(achievementId, DateTime.Now);
+                    RefreshAchievements();
+                }
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("Achievement_Click", ex);
+            }
+        }
+
+        private void EasterEggHOA_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (!_dbManager.IsEasterEggClicked())
+            {
+                _achievementService?.OnEasterEggClicked(DateTime.Now);
+                EasterEggHOA.Visibility = Visibility.Collapsed;
+                RefreshAchievements();
+            }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = e.Uri.AbsoluteUri,
+                    UseShellExecute = true
+                });
+                e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("Hyperlink_RequestNavigate", ex);
+            }
         }
     }
 
