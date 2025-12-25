@@ -547,23 +547,12 @@
             </TabItem>
             
             <!-- Easter Egg: Heart of Africa (Hidden) -->
-            <Image x:Name="EasterEggHOA"
-                   Source="Resources/achievements/hoa.png"
-                   Width="32" Height="32"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
-                   Margin="0,0,5,30"
-                   Grid.Row="1"
-                   Opacity="0.12"
-                   Cursor="Hand"
-                   MouseLeftButtonUp="EasterEggHOA_MouseLeftButtonUp"
-                   ToolTip="?"/>
         </TabControl>
 
         <!-- Easter Egg HOA - Hidden sprite in bottom-right -->
         <Image x:Name="EasterEggHOA"
                Grid.Row="1"
-               Source="/Resources/achivements/hoa.png"
+               Source="Resources/achievements/hoa.png"
                Width="32" 
                Height="32"
                Opacity="0.12"
@@ -572,7 +561,8 @@
                Margin="0,0,20,35"
                MouseLeftButtonUp="EasterEggHOA_Click"
                Cursor="Hand"
-               Visibility="Visible"/>
+               Visibility="Visible"
+               ToolTip="?"/>
 
         <!-- Toast Container (top-right overlay) -->
         <Grid x:Name="ToastContainer"

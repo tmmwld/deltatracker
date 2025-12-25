@@ -560,6 +560,9 @@ namespace DeltaForceTracker
             App.Instance.ChangeLanguage(_currentLanguage);
             _dbManager.SaveSetting("Language", _currentLanguage);
             
+            // Reload quotes for new language
+            _quoteService?.ReloadQuotes(_currentLanguage);
+            
             // Refresh all UI elements
             RefreshDashboard();
             RefreshAnalytics();

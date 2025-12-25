@@ -55,6 +55,12 @@ namespace DeltaForceTracker.Services
             _remainingQuotes = new List<string>(_quotes);
         }
 
+        public void ReloadQuotes(string language)
+        {
+            _quotes = GetDefaultQuotes(language);
+            ResetQuotePool();
+        }
+
         public string GetRandomQuote(string language = "en")
         {
             if (_quotes.Count == 0)
