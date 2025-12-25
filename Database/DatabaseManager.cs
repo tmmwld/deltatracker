@@ -786,6 +786,38 @@ namespace DeltaForceTracker.Database
             command.ExecuteNonQuery();
         }
 
+        public void ResetAllAchievements()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            using var transaction = connection.BeginTransaction();
+            var command = connection.CreateCommand();
+            command.Transaction = transaction;
+
+            try
+            {
+                // Reset achievements
+                command.CommandText = "UPDATE Achievements SET IsUnlocked = 0, UnlockedAt = NULL";
+                command.ExecuteNonQuery();
+
+                // Reset all counters
+                command.CommandText = "DELETE FROM DailyCounters";
+                command.ExecuteNonQuery();
+
+                // Reset Easter egg
+                command.CommandText = "UPDATE EasterEgg SET IsClicked = 0, ClickedAt = NULL WHERE Id = 1";
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);
