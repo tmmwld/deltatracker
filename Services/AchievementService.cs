@@ -330,7 +330,7 @@ namespace DeltaForceTracker.Services
         /// </summary>
         public void OnCheaterMarked(DateTime timestamp)
         {
-            Check DayChange(timestamp);
+            CheckDayChange(timestamp);
             _lastCheaterMarkTime = timestamp;
 
             // Increment daily cheater counter
