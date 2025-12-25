@@ -143,6 +143,9 @@ namespace DeltaForceTracker
                 {
                     EasterEggHOA.Visibility = Visibility.Collapsed;
                 }
+                
+                // Set releases link text
+                UpdateReleasesLinkText();
 
                 // Premium entrance animations for dashboard cards (after initialization)
                 AnimationHelper.StaggerFadeIn(BalanceCard, PLCard, ActionsCard, QuoteCard);
@@ -561,6 +564,7 @@ namespace DeltaForceTracker
             RefreshDashboard();
             RefreshAnalytics();
             LoadRandomQuote();
+            UpdateReleasesLinkText();
             
             System.Diagnostics.Debug.WriteLine($"✓ Language toggled to {_currentLanguage}");
         }
@@ -920,6 +924,23 @@ namespace DeltaForceTracker
                 _achievementService?.OnEasterEggClicked(DateTime.Now);
                 EasterEggHOA.Visibility = Visibility.Collapsed;
                 RefreshAchievements();
+            }
+        }
+
+        private void UpdateReleasesLinkText()
+        {
+            try
+            {
+                var linkText = _currentLanguage == "ru" 
+                    ? "Посмотреть последнюю версию" 
+                    : "See the latest version here";
+                
+                ReleasesLink.Inlines.Clear();
+                ReleasesLink.Inlines.Add(linkText);
+            }
+            catch (Exception ex)
+            {
+                DiagnosticLogger.LogException("UpdateReleasesLinkText", ex);
             }
         }
 

@@ -584,11 +584,10 @@
                        Opacity="0.5"
                        TextAlignment="Right"
                        Margin="0,2,0,0">
-                <Hyperlink NavigateUri="https://github.com/tmmwld/deltatracker/releases"
+                <Hyperlink x:Name="ReleasesLink"
+                           NavigateUri="https://github.com/tmmwld/deltatracker/releases"
                            RequestNavigate="Hyperlink_RequestNavigate"
-                           Foreground="{StaticResource TextSecondaryBrush}">
-                    <Run Text="{DynamicResource Lang.SeeLatestVersion}"/>
-                </Hyperlink>
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
             </TextBlock>
         </StackPanel>
     </Grid>
