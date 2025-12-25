@@ -505,11 +505,11 @@
                             </Grid>
                         </Border>
 
-                        <!-- Achievements Grid (5 columns x Auto rows) -->
+                        <!-- Achievements Grid (Flow layout) -->
                         <ItemsControl x:Name="AchievementsGrid">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid Columns="5"/>
+                                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -531,12 +531,12 @@
                                             
                                             <!-- Achievement Title -->
                                             <TextBlock Text="{Binding DisplayTitle}"
-                                                      FontSize="12"
+                                                      FontSize="11"
                                                       FontWeight="SemiBold"
                                                       Foreground="{StaticResource TextPrimaryBrush}"
                                                       TextAlignment="Center"
                                                       TextWrapping="Wrap"
-                                                      MaxWidth="100"/>
+                                                      MaxWidth="90"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

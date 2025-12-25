@@ -33,7 +33,7 @@ namespace DeltaForceTracker.Controls
                 // Fallback to locked icon if load fails
                 try
                 {
-                    AchIcon.Source = new BitmapImage(new Uri("Resources/achievements/0_Locked.png", UriKind.Relative));
+                    AchIcon.Source = new BitmapImage(new Uri("/Resources/achievements/0_Locked.png", UriKind.Relative));
                 }
                 catch { }
             }

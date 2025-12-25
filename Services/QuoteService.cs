@@ -22,32 +22,10 @@ namespace DeltaForceTracker.Services
 
         private void LoadQuotes()
         {
-            try
-            {
-                // Try to load from Resources/Data/affirmations.json
-                var jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Data", "affirmations.json");
-                
-                if (File.Exists(jsonPath))
-                {
-                    var json = File.ReadAllText(jsonPath);
-                    var data = JsonConvert.DeserializeObject<QuoteData>(json);
-                    _quotes = data?.Quotes ?? new List<string>();
-                }
-                else
-                {
-                    // Fallback: load from embedded resource or provide default quotes
-                    _quotes = GetDefaultQuotes();
-                }
-
-                // Initialize remaining quotes pool
-                ResetQuotePool();
-            }
-            catch (Exception)
-            {
-                // If loading fails, use default quotes
-                _quotes = GetDefaultQuotes();
-                ResetQuotePool();
-            }
+            // Always use default quotes to support localization
+            // External file support removed to ensure proper language switching
+            _quotes = GetDefaultQuotes();
+            ResetQuotePool();
         }
 
         private void ResetQuotePool()

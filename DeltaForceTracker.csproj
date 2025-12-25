@@ -36,10 +36,7 @@
     <Resource Include="Resources\Styles.xaml" />
     <Resource Include="Resources\TacticalIcons.xaml" />
     
-    <!-- Data Files -->
-    <None Include="Resources\Data\affirmations.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <!-- Data Files Removed (Using embedded/default quotes) -->
     
     <!-- Sound Effects -->
     <None Include="Resources\Sfx\scan.wav">
@@ -88,10 +85,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     
-    <!-- Achievement Images -->
-    <None Include="Resources\achievements\*.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <!-- Achievement Images (Embedded Resource) -->
+    <Resource Include="Resources\achievements\*.png" />
   </ItemGroup>
 
 </Project>

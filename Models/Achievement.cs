@@ -38,9 +38,9 @@ namespace DeltaForceTracker.Models
         public string GetIconPath()
         {
             if (!IsUnlocked)
-                return "Resources/achievements/0_Locked.png";
+                return "/Resources/achievements/0_Locked.png";
             
-            return $"Resources/achievements/{IconFileName}";
+            return $"/Resources/achievements/{IconFileName}";
         }
 
         /// <summary>
