@@ -981,6 +981,12 @@ namespace DeltaForceTracker
                 DiagnosticLogger.LogException("Hyperlink_RequestNavigate", ex);
             }
         }
+
+        private void MainWindow_Activated(object? sender, EventArgs e)
+        {
+            // Achievement: OnAppActivated (tracks focus for Alt+Tab Warrior)
+            _achievementService?.OnAppActivated(DateTime.Now);
+        }
     }
 
 }
