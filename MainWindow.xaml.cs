@@ -102,6 +102,7 @@ namespace DeltaForceTracker
             
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
+            this.Activated += MainWindow_Activated;
             
             DiagnosticLogger.Log("=== MAINWINDOW CONSTRUCTOR END ===");
         }

@@ -215,6 +215,53 @@ namespace DeltaForceTracker.Database
             return scans;
         }
 
+        public int GetTotalScansCount()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM Scans";
+
+            var result = command.ExecuteScalar();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public List<decimal> GetLast3ActiveDaysPL()
+        {
+            var dailyPLs = new List<decimal>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            // Get P&L (last - first numeric value) for the last 3 active days
+            command.CommandText = @"
+                WITH DailyRange AS (
+                    SELECT 
+                        DATE(Timestamp) as LogDate,
+                        MIN(Timestamp) as FirstTime,
+                        MAX(Timestamp) as LastTime
+                    FROM Scans
+                    GROUP BY DATE(Timestamp)
+                    ORDER BY LogDate DESC
+                    LIMIT 3
+                )
+                SELECT 
+                    (SELECT NumericValue FROM Scans s2 WHERE s2.Timestamp = dr.LastTime) - 
+                    (SELECT NumericValue FROM Scans s3 WHERE s3.Timestamp = dr.FirstTime) as PL
+                FROM DailyRange dr
+                ORDER BY LogDate DESC";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                dailyPLs.Add(Convert.ToDecimal(reader.GetDouble(0)));
+            }
+
+            return dailyPLs;
+        }
+
         public List<BalanceScan> GetAllScans()
         {
             return GetScansForDateRange(DateTime.MinValue, DateTime.MaxValue);

@@ -218,11 +218,25 @@ namespace DeltaForceTracker.Services
                 TryUnlockAchievement(8, launchTime);
             }
 
-            // Check #12: Alt+Tab Warrior (5+ app opens today)
-            var appOpens = _dbManager.GetDailyCounter("app_opens_today");
-            if (appOpens >= 5)
+            // #12: Alt+Tab Warrior condition moved to OnAppActivated
+        }
+
+        /// <summary>
+        /// Called when the app window is activated (gained focus). 
+        /// Tracks #12: Alt+Tab Warrior.
+        /// </summary>
+        public void OnAppActivated(DateTime timestamp)
+        {
+            CheckDayChange(timestamp);
+
+            // Increment activation counter
+            _dbManager.IncrementDailyCounter("app_activations_today", timestamp);
+
+            // Check #12: Alt+Tab Warrior (5+ activations today)
+            var activations = _dbManager.GetDailyCounter("app_activations_today");
+            if (activations >= 5)
             {
-                TryUnlockAchievement(12, launchTime);
+                TryUnlockAchievement(12, timestamp);
             }
         }
 
@@ -233,7 +247,7 @@ namespace DeltaForceTracker.Services
         {
             CheckDayChange(currentScan.Timestamp);
 
-            var totalScans = _dbManager.GetAllScans().Count;
+            var totalScans = _dbManager.GetTotalScansCount();
 
             // #1: Best User (50+ total scans)
             if (totalScans > 50)
@@ -498,21 +512,10 @@ namespace DeltaForceTracker.Services
         /// </summary>
         private void CheckLast3DaysAchievements(DateTime currentTime)
         {
-            var allScans = _dbManager.GetAllScans();
-            var activeDays = allScans.GroupBy(s => s.Timestamp.Date)
-                                     .Where(g => g.Count() > 0)
-                                     .OrderByDescending(g => g.Key)
-                                     .Take(3)
-                                     .ToList();
+            var dailyPLs = _dbManager.GetLast3ActiveDaysPL();
 
-            if (activeDays.Count == 3)
+            if (dailyPLs.Count == 3)
             {
-                var dailyPLs = activeDays.Select(g =>
-                {
-                    var scans = g.OrderBy(s => s.Timestamp).ToList();
-                    return scans[scans.Count - 1].NumericValue - scans[0].NumericValue;
-                }).ToList();
-
                 // #2: Hodler (all 3 days positive)
                 if (dailyPLs.All(pl => pl > 0))
                 {
