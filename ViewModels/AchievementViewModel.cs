@@ -29,7 +29,6 @@ namespace DeltaForceTracker.ViewModels
             }
             else
             {
-                // Optionally hide description or show hint for locked
                 DisplayDescription = language == "ru" ? "???" : "???"; 
             }
         }

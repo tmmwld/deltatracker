@@ -874,17 +874,21 @@ namespace DeltaForceTracker
 
         private void OnAchievementUnlocked(object? sender, Models.Achievement achievement)
         {
-            // Queue toast for display
-            _achievementToastQueue.Enqueue(achievement);
-            
-            // Refresh UI
-            RefreshAchievements();
-            
-            // Start showing toasts if not already showing
-            if (!_isShowingToast)
+            // Ensure UI updates happen on main thread
+            Dispatcher.Invoke(() =>
             {
-                ShowNextToast();
-            }
+                // Queue toast for display
+                _achievementToastQueue.Enqueue(achievement);
+                
+                // Refresh UI
+                RefreshAchievements();
+                
+                // Start showing toasts if not already showing
+                if (!_isShowingToast)
+                {
+                    ShowNextToast();
+                }
+            });
         }
 
         private async void ShowNextToast()
