@@ -155,11 +155,11 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT NumericValue 
                 FROM Scans 
-                WHERE DATE(Timestamp) = DATE($date)
+                WHERE Timestamp LIKE $date
                 ORDER BY Timestamp ASC
                 LIMIT 1
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToDecimal(result) : 0;
@@ -239,11 +239,11 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 WITH DailyRange AS (
                     SELECT 
-                        DATE(Timestamp) as LogDate,
+                        SUBSTR(Timestamp, 1, 10) as LogDate,
                         MIN(Timestamp) as FirstTime,
                         MAX(Timestamp) as LastTime
                     FROM Scans
-                    GROUP BY DATE(Timestamp)
+                    GROUP BY SUBSTR(Timestamp, 1, 10)
                     ORDER BY LogDate DESC
                     LIMIT 3
                 )
@@ -506,9 +506,9 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM TiltEvents 
-                WHERE DATE(Timestamp) = DATE($date)
+                WHERE Timestamp LIKE $date
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
@@ -574,12 +574,12 @@ namespace DeltaForceTracker.Database
                 DELETE FROM CheaterEvents
                 WHERE Id = (
                     SELECT Id FROM CheaterEvents
-                    WHERE DATE(Timestamp) = DATE($date)
+                    WHERE Timestamp LIKE $date
                     ORDER BY Timestamp DESC
                     LIMIT 1
                 )
             ";
-            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd") + "%");
             command.ExecuteNonQuery();
         }
 
@@ -604,9 +604,9 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM CheaterEvents 
-                WHERE DATE(Timestamp) = DATE($date)
+                WHERE Timestamp LIKE $date
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
@@ -637,12 +637,12 @@ namespace DeltaForceTracker.Database
                 DELETE FROM RedItemEvents
                 WHERE Id = (
                     SELECT Id FROM RedItemEvents
-                    WHERE DATE(Timestamp) = DATE($date)
+                    WHERE Timestamp LIKE $date
                     ORDER BY Timestamp DESC
                     LIMIT 1
                 )
             ";
-            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd") + "%");
             command.ExecuteNonQuery();
         }
 
@@ -667,9 +667,9 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM RedItemEvents 
-                WHERE DATE(Timestamp) = DATE($date)
+                WHERE Timestamp LIKE $date
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
