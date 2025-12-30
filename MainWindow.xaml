@@ -611,12 +611,12 @@
                     VerticalAlignment="Bottom"
                     Margin="0,0,15,8">
             <TextBlock x:Name="VersionLabel"
-                       Text="v2.0.1"
-                       FontSize="9"
+                       Text="v2.0.2"
+                       FontSize="10"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        Opacity="0.5"
                        TextAlignment="Right"/>
-            <TextBlock FontSize="8"
+            <TextBlock FontSize="9"
                        Opacity="0.5"
                        TextAlignment="Right"
                        Margin="0,2,0,0">

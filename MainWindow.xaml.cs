@@ -567,6 +567,7 @@ namespace DeltaForceTracker
             // Refresh all UI elements
             RefreshDashboard();
             RefreshAnalytics();
+            RefreshAchievements();
             LoadRandomQuote();
             UpdateReleasesLinkText();
             
