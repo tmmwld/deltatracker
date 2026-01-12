@@ -329,6 +329,15 @@ namespace DeltaForceTracker
             RefreshAchievements();
         }
 
+        private void UndoTiltButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            var now = DateTime.Now;
+            _dbManager.UndoTilt(now);
+            
+            RefreshAnalytics();
+            RefreshDashboard();
+        }
+
         private void CheaterButton_Click(object sender, RoutedEventArgs e)
         {
             // Play cheater sound
@@ -497,6 +506,42 @@ namespace DeltaForceTracker
                 }
             }
         }
+
+        private void DeleteScanButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Get scan ID from button Tag
+            if (sender is Button button && button.Tag is int scanId)
+            {
+                var result = System.Windows.MessageBox.Show(
+                    App.Instance.GetString("Lang.Confirm.DeleteScan"),
+                    App.Instance.GetString("Lang.Confirm.DeleteTitle"),
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning,
+                    MessageBoxResult.No
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        _dbManager.DeleteScan(scanId);
+                        RefreshDashboard();
+                        RefreshAnalytics();
+                        UpdateStatus("Scan deleted");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show(
+                            $"Failed to delete scan: {ex.Message}",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error
+                        );
+                    }
+                }
+            }
+        }
+
 
         private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -794,6 +839,7 @@ namespace DeltaForceTracker
                 
                 result.Add(new ScanHistoryViewModel
                 {
+                    Id = current.Id,
                     Timestamp = current.Timestamp,
                     RawValue = current.RawValue,
                     NumericValue = current.NumericValue,

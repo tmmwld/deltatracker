@@ -39,6 +39,9 @@
     <s:String x:Key="Lang.Time">Time</s:String>
     <s:String x:Key="Lang.RawValue">Raw Value</s:String>
     <s:String x:Key="Lang.NumericValue">Numeric Value</s:String>
+    <s:String x:Key="Lang.Delete">Delete</s:String>
+    <s:String x:Key="Lang.Confirm.DeleteScan">Are you sure you want to delete this scan?\n\nThis action cannot be undone.</s:String>
+    <s:String x:Key="Lang.Confirm.DeleteTitle">Delete Scan</s:String>
     
     <!-- Status Messages -->
     <s:String x:Key="Lang.Status.Ready">Ready to scan</s:String>

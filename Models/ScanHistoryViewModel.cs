@@ -4,6 +4,7 @@ namespace DeltaForceTracker.Models
 {
     public class ScanHistoryViewModel
     {
+        public int Id { get; set; }
         public DateTime Timestamp { get; set; }
         public string RawValue { get; set; } = string.Empty;
         public decimal NumericValue { get; set; }

@@ -8,12 +8,13 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>DeltaForceTracker</AssemblyName>
     <RootNamespace>DeltaForceTracker</RootNamespace>
-    <Version>2.0.2</Version>
+    <Version>2.1.0</Version>
     <Authors>Delta Force Balance Tracker</Authors>
     <Company>DFBalanceTracker</Company>
     <Product>Delta Force Balance Tracker</Product>
     <Description>Track your Delta Force in-game balance with OCR</Description>
     <ApplicationIcon>DT_icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>

@@ -261,15 +261,15 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             
-                            <!-- Cheater Counter -->
+                            <!-- Tilt Counter (Left) -->
                             <StackPanel Grid.Column="0">
-                                <Button x:Name="CheaterButton"
-                                        Content="{DynamicResource Lang.Cheater}"
-                                        Style="{StaticResource ModernButton}"
+                                <Button x:Name="TiltButton"
+                                        Content="{DynamicResource Lang.TiltButton}"
+                                        Style="{StaticResource TiltButton}"
                                         Height="60"
                                         MinWidth="200"
-                                        Click="CheaterButton_Click"/>
-                                <TextBlock x:Name="UndoCheaterButton"
+                                        Click="TiltButton_Click"/>
+                                <TextBlock x:Name="UndoTiltButton"
                                            Text="{DynamicResource Lang.Undo}"
                                            FontFamily="{StaticResource MainFont}"
                                            FontSize="10"
@@ -277,21 +277,11 @@
                                            HorizontalAlignment="Center"
                                            Margin="0,5,0,0"
                                            Cursor="Hand"
-                                           MouseLeftButtonUp="UndoCheaterButton_Click"/>
+                                           MouseLeftButtonUp="UndoTiltButton_Click"/>
                             </StackPanel>
                             
-                            <!-- Tilt Counter (Existing, no Undo) -->
+                            <!-- Red Items Counter (Center, Red Style) -->
                             <StackPanel Grid.Column="2">
-                                <Button x:Name="TiltButton"
-                                        Content="{DynamicResource Lang.TiltButton}"
-                                        Style="{StaticResource TiltButton}"
-                                        Height="60"
-                                        MinWidth="200"
-                                        Click="TiltButton_Click"/>
-                            </StackPanel>
-                            
-                            <!-- Red Items Counter -->
-                            <StackPanel Grid.Column="4">
                                 <Button x:Name="RedButton"
                                         Content="{DynamicResource Lang.Red}"
                                         Style="{StaticResource ModernButton}"
@@ -307,6 +297,25 @@
                                            Margin="0,5,0,0"
                                            Cursor="Hand"
                                            MouseLeftButtonUp="UndoRedButton_Click"/>
+                            </StackPanel>
+                            
+                            <!-- Cheater Counter (Right) -->
+                            <StackPanel Grid.Column="4">
+                                <Button x:Name="CheaterButton"
+                                        Content="{DynamicResource Lang.Cheater}"
+                                        Style="{StaticResource ModernButton}"
+                                        Height="60"
+                                        MinWidth="200"
+                                        Click="CheaterButton_Click"/>
+                                <TextBlock x:Name="UndoCheaterButton"
+                                           Text="{DynamicResource Lang.Undo}"
+                                           FontFamily="{StaticResource MainFont}"
+                                           FontSize="10"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,5,0,0"
+                                           Cursor="Hand"
+                                           MouseLeftButtonUp="UndoCheaterButton_Click"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -472,6 +481,23 @@
                                         </DataGridTemplateColumn>
                                         
                                         <DataGridTextColumn Header="{DynamicResource Lang.NumericValue}" Binding="{Binding NumericValue, StringFormat='N2'}" Width="*"/>
+                                        
+                                        <!-- Delete Button Column -->
+                                        <DataGridTemplateColumn Header="{DynamicResource Lang.Delete}" Width="Auto">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="✕"
+                                                            Tag="{Binding Id}"
+                                                            Click="DeleteScanButton_Click"
+                                                            Style="{StaticResource DangerButton}"
+                                                            Width="32"
+                                                            Height="24"
+                                                            FontSize="14"
+                                                            Padding="0"
+                                                            ToolTip="{DynamicResource Lang.Delete}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>
@@ -611,7 +637,7 @@
                     VerticalAlignment="Bottom"
                     Margin="0,0,15,8">
             <TextBlock x:Name="VersionLabel"
-                       Text="v2.0.2"
+                       Text="v2.1.0"
                        FontSize="10"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        Opacity="0.5"

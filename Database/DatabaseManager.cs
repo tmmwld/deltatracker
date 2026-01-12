@@ -146,6 +146,21 @@ namespace DeltaForceTracker.Database
             command.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Delete a scan by its ID
+        /// </summary>
+        public void DeleteScan(int scanId)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Scans WHERE Id = $id";
+            command.Parameters.AddWithValue("$id", scanId);
+            command.ExecuteNonQuery();
+        }
+
+
         public decimal GetDailyStartingBalance(DateTime date)
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -495,6 +510,25 @@ namespace DeltaForceTracker.Database
             
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public void UndoTilt(DateTime timestamp)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                DELETE FROM TiltEvents
+                WHERE Id = (
+                    SELECT Id FROM TiltEvents
+                    WHERE Timestamp LIKE $date
+                    ORDER BY Timestamp DESC
+                    LIMIT 1
+                )
+            ";
+            command.Parameters.AddWithValue("$date", timestamp.ToString("yyyy-MM-dd") + "%");
+            command.ExecuteNonQuery();
         }
 
         public int GetDailyTiltCount(DateTime date)

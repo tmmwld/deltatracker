@@ -38,6 +38,9 @@
     <s:String x:Key="Lang.Time">Время</s:String>
     <s:String x:Key="Lang.RawValue">Сырое значение</s:String>
     <s:String x:Key="Lang.NumericValue">Числовое значение</s:String>
+    <s:String x:Key="Lang.Delete">Удалить</s:String>
+    <s:String x:Key="Lang.Confirm.DeleteScan">Вы уверены, что хотите удалить этот скан?\n\nЭто действие нельзя отменить.</s:String>
+    <s:String x:Key="Lang.Confirm.DeleteTitle">Удалить скан</s:String>
     
     <!-- Status Messages -->
     <s:String x:Key="Lang.Status.Ready">Готов к сканированию</s:String>
