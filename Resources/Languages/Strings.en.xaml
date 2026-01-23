@@ -11,6 +11,7 @@
     <s:String x:Key="Lang.CurrentBalance">CURRENT BALANCE</s:String>
     <s:String x:Key="Lang.DailyPL">DAILY P&amp;L</s:String>
     <s:String x:Key="Lang.FloatingButton">Show Floating Scan Button</s:String>
+    <s:String x:Key="Lang.FloatingButtonOpacity">Opacity</s:String>
     <s:String x:Key="Lang.Hotkey">HOTKEY</s:String>
     <s:String x:Key="Lang.Status">STATUS</s:String>
     <s:String x:Key="Lang.Actions">ACTIONS</s:String>

@@ -8,6 +8,7 @@ namespace DeltaForceTracker.Views
     public partial class FloatingScanButton : Window
     {
         public event EventHandler? ScanRequested;
+        private double _baseOpacity = 0.15; // Default 15%
 
         public FloatingScanButton()
         {
@@ -26,6 +27,20 @@ namespace DeltaForceTracker.Views
             this.Top = screenHeight * 0.10; // 10% from top
         }
 
+        /// <summary>
+        /// Set the base opacity for the floating button
+        /// </summary>
+        public void SetOpacity(double opacity)
+        {
+            _baseOpacity = Math.Clamp(opacity, 0.05, 1.0);
+            
+            // Apply to border if not currently hovered
+            if (ScanBorder != null && !ScanBorder.IsMouseOver)
+            {
+                ScanBorder.Opacity = _baseOpacity;
+            }
+        }
+
         private void ScanButton_Click(object sender, RoutedEventArgs e)
         {
             ScanRequested?.Invoke(this, EventArgs.Empty);
@@ -42,10 +57,10 @@ namespace DeltaForceTracker.Views
 
         private void Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            // Back to 40% opacity
+            // Back to base opacity
             if (sender is Border border)
             {
-                border.Opacity = 0.4;
+                border.Opacity = _baseOpacity;
             }
         }
     }

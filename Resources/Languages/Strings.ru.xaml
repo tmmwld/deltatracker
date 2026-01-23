@@ -16,6 +16,7 @@
     <s:String x:Key="Lang.MouseButton4">Кнопка мыши 4 (x3)</s:String>
     <s:String x:Key="Lang.MouseButton5">Кнопка мыши 5 (x3)</s:String>
     <s:String x:Key="Lang.FloatingButton">Показать плавающую кнопку сканирования</s:String>
+    <s:String x:Key="Lang.FloatingButtonOpacity">Прозрачность</s:String>
     <s:String x:Key="Lang.Hotkey">ХОТКЕЙ</s:String>
     <s:String x:Key="Lang.Actions">ДЕЙСТВИЯ</s:String>
     

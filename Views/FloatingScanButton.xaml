@@ -11,7 +11,8 @@
         ShowInTaskbar="False"
         ResizeMode="NoResize">
     
-    <Border Background="#1A1F2E" 
+    <Border x:Name="ScanBorder"
+            Background="#1A1F2E" 
             BorderBrush="#00FF88" 
             BorderThickness="2" 
             CornerRadius="25"

@@ -41,6 +41,7 @@ namespace DeltaForceTracker
         private DateTime _appLaunchTime;
         private Queue<Models.Achievement> _achievementToastQueue = new Queue<Models.Achievement>();
         private bool _isShowingToast = false;
+        private int _unseenAchievementCount = 0;
 
         public MainWindow()
         {
@@ -246,6 +247,14 @@ namespace DeltaForceTracker
             // Load Floating Button preference
             var floatingEnabled = _dbManager.GetSetting("FloatingButtonEnabled") == "true";
             FloatingButtonToggle.IsChecked = floatingEnabled;
+            
+            // Load Floating Button opacity
+            var opacityStr = _dbManager.GetSetting("FloatingButtonOpacity");
+            if (double.TryParse(opacityStr, out double opacity))
+            {
+                FloatingButtonOpacitySlider.Value = opacity;
+                OpacityValueLabel.Text = $"{(int)(opacity * 100)}%";
+            }
         }
 
         private void SaveSettings()
@@ -871,6 +880,9 @@ namespace DeltaForceTracker
             {
                 _floatingButton = new Views.FloatingScanButton();
                 _floatingButton.ScanRequested += (s, args) => PerformScan();
+                
+                // Apply current opacity setting
+                _floatingButton.SetOpacity(FloatingButtonOpacitySlider.Value);
             }
             _floatingButton.Show();
             _dbManager.SaveSetting("FloatingButtonEnabled", "true");
@@ -880,6 +892,21 @@ namespace DeltaForceTracker
         {
             _floatingButton?.Hide();
             _dbManager.SaveSetting("FloatingButtonEnabled", "false");
+        }
+
+        private void FloatingButtonOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Update label
+            if (OpacityValueLabel != null)
+            {
+                OpacityValueLabel.Text = $"{(int)(e.NewValue * 100)}%";
+            }
+            
+            // Apply to floating button if it exists
+            _floatingButton?.SetOpacity(e.NewValue);
+            
+            // Save to settings
+            _dbManager?.SaveSetting("FloatingButtonOpacity", e.NewValue.ToString());
         }
 
         private void UpdateStatus(string message)
@@ -943,12 +970,34 @@ namespace DeltaForceTracker
                 // Refresh UI
                 RefreshAchievements();
                 
-                // Start showing toasts if not already showing
-                if (!_isShowingToast)
+                // If window is active, show toast
+                if (this.IsActive)
                 {
-                    ShowNextToast();
+                    if (!_isShowingToast)
+                    {
+                        ShowNextToast();
+                    }
+                }
+                else
+                {
+                    // If window is NOT active, increment unseen count and show badge
+                    _unseenAchievementCount++;
+                    UpdateAchievementsBadge();
                 }
             });
+        }
+
+        private void UpdateAchievementsBadge()
+        {
+            if (_unseenAchievementCount > 0)
+            {
+                AchievementsBadgeCount.Text = _unseenAchievementCount.ToString();
+                AchievementsBadge.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AchievementsBadge.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void ShowNextToast()
@@ -1002,7 +1051,6 @@ namespace DeltaForceTracker
             if (!_dbManager.IsEasterEggClicked())
             {
                 _achievementService?.OnEasterEggClicked(DateTime.Now);
-                EasterEggHOA.Visibility = Visibility.Collapsed;
                 RefreshAchievements();
             }
         }
@@ -1045,6 +1093,22 @@ namespace DeltaForceTracker
         {
             // Achievement: OnAppActivated (tracks focus for Alt+Tab Warrior)
             _achievementService?.OnAppActivated(DateTime.Now);
+
+            // Show any deferred toasts
+            if (_achievementToastQueue.Count > 0 && !_isShowingToast)
+            {
+                ShowNextToast();
+            }
+        }
+
+        private void AchievementsTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // If the Achievements tab is selected, clear the badge
+            if (AchievementsTab.IsSelected)
+            {
+                _unseenAchievementCount = 0;
+                UpdateAchievementsBadge();
+            }
         }
     }
 
