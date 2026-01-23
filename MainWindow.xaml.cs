@@ -1101,13 +1101,17 @@ namespace DeltaForceTracker
             }
         }
 
-        private void AchievementsTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // If the Achievements tab is selected, clear the badge
-            if (AchievementsTab.IsSelected)
+            // Only handle if this event directly from the TabControl (avoid bubbling from child controls)
+            if (e.Source is TabControl)
             {
-                _unseenAchievementCount = 0;
-                UpdateAchievementsBadge();
+                // If the Achievements tab is selected, clear the badge
+                if (AchievementsTab != null && AchievementsTab.IsSelected)
+                {
+                    _unseenAchievementCount = 0;
+                    UpdateAchievementsBadge();
+                }
             }
         }
     }

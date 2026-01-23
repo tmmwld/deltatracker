@@ -86,7 +86,7 @@
         </Border>
 
         <!-- Main Content -->
-        <TabControl Grid.Row="1" Margin="20">
+        <TabControl Grid.Row="1" Margin="20" SelectionChanged="MainTabControl_SelectionChanged">
             <TabItem Header="{DynamicResource Lang.Dashboard}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="VerticalOnly">
                     <StackPanel Margin="0,10,0,0">
@@ -553,7 +553,7 @@
             </TabItem>
 
             <!-- Achievements Tab -->
-            <TabItem x:Name="AchievementsTab" SelectionChanged="AchievementsTab_SelectionChanged">
+            <TabItem x:Name="AchievementsTab">
                 <TabItem.Header>
                     <Grid>
                         <TextBlock Text="{DynamicResource Lang.Achievements}" />
