@@ -143,12 +143,6 @@ namespace DeltaForceTracker
                 // Initialize achievement system
                 _achievementService?.OnAppLaunched(_appLaunchTime);
                 
-                // Hide easter egg if already clicked
-                if (_dbManager.IsEasterEggClicked())
-                {
-                    EasterEggHOA.Visibility = Visibility.Collapsed;
-                }
-                
                 // Set releases link text
                 UpdateReleasesLinkText();
 
