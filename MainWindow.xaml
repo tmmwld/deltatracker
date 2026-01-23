@@ -686,7 +686,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Margin="0,0,15,8">
-            <TextBlock FontSize="10"
+            <TextBlock FontSize="11"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        Opacity="0.6"
                        TextAlignment="Right">
@@ -703,7 +703,7 @@
                 </InlineUIContainer>
                 <Run Text=" to Delta Force game | v2.2.1"/>
             </TextBlock>
-            <TextBlock FontSize="9"
+            <TextBlock FontSize="10"
                        Opacity="0.5"
                        TextAlignment="Right"
                        Margin="0,2,0,0">
