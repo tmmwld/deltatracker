@@ -71,6 +71,10 @@
     <s:String x:Key="Lang.TotalReds">ВСЕГО REDS</s:String>
     <s:String x:Key="Lang.TotalTilts">ВСЕГО ТИЛЬТОВ</s:String>
     
+    <!-- Chart Options -->
+    <s:String x:Key="Lang.Analytics.ShowAll">Всё время</s:String>
+    <s:String x:Key="Lang.Analytics.ShowRecent">Последние 50</s:String>
+    
     <!-- Achievements -->
     <s:String x:Key="Lang.Achievements">Достижения</s:String>
     <s:String x:Key="Lang.Achievement.Unlocked">Достижение получено!</s:String>

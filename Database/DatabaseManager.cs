@@ -123,6 +123,29 @@ namespace DeltaForceTracker.Database
             }
         }
 
+        /// <summary>
+        /// Get the game day start time for a given timestamp.
+        /// Game day runs from 08:00 to 08:00 (not midnight to midnight).
+        /// </summary>
+        private DateTime GetGameDayStart(DateTime timestamp)
+        {
+            // If timestamp is before 08:00, the game day started yesterday at 08:00
+            if (timestamp.Hour < 8)
+            {
+                return timestamp.Date.AddDays(-1).AddHours(8);
+            }
+            // Otherwise, the game day started today at 08:00
+            return timestamp.Date.AddHours(8);
+        }
+
+        /// <summary>
+        /// Get the game day end time for a given game day start.
+        /// </summary>
+        private DateTime GetGameDayEnd(DateTime gameDayStart)
+        {
+            return gameDayStart.AddDays(1);
+        }
+
         public void RecordScan(DateTime timestamp, string rawValue, decimal numericValue)
         {
             var dailyStart = GetDailyStartingBalance(timestamp.Date);
@@ -317,16 +340,17 @@ namespace DeltaForceTracker.Database
 
         public DailyStats GetDailyStats(DateTime date)
         {
-            var scans = GetScansForDateRange(
-                date.Date, 
-                date.Date.AddDays(1).AddTicks(-1)
-            );
+            // Use game day boundaries (08:00-08:00)
+            var gameDayStart = GetGameDayStart(date);
+            var gameDayEnd = GetGameDayEnd(gameDayStart);
+            
+            var scans = GetScansForDateRange(gameDayStart, gameDayEnd.AddTicks(-1));
 
             if (scans.Count == 0)
             {
                 return new DailyStats
                 {
-                    Date = date.Date,
+                    Date = gameDayStart,
                     StartBalance = 0,
                     EndBalance = 0,
                     ProfitLoss = 0,
@@ -340,7 +364,7 @@ namespace DeltaForceTracker.Database
 
             return new DailyStats
             {
-                Date = date.Date,
+                Date = gameDayStart,
                 StartBalance = startBalance,
                 EndBalance = endBalance,
                 ProfitLoss = endBalance - startBalance,
@@ -366,7 +390,8 @@ namespace DeltaForceTracker.Database
             var allScans = GetAllScans();
             if (allScans.Count == 0) return null;
 
-            var dailyGroups = allScans.GroupBy(s => s.Timestamp.Date);
+            // Group by game day start time (08:00-08:00)
+            var dailyGroups = allScans.GroupBy(s => GetGameDayStart(s.Timestamp));
             
             DailyStats? bestDay = null;
             decimal maxPL = decimal.MinValue;
@@ -389,7 +414,8 @@ namespace DeltaForceTracker.Database
             var allScans = GetAllScans();
             if (allScans.Count == 0) return null;
 
-            var dailyGroups = allScans.GroupBy(s => s.Timestamp.Date);
+            // Group by game day start time (08:00-08:00)
+            var dailyGroups = allScans.GroupBy(s => GetGameDayStart(s.Timestamp));
             
             DailyStats? worstDay = null;
             decimal minPL = decimal.MaxValue;
@@ -533,6 +559,10 @@ namespace DeltaForceTracker.Database
 
         public int GetDailyTiltCount(DateTime date)
         {
+            // Use game day boundaries (08:00-08:00)
+            var gameDayStart = GetGameDayStart(date);
+            var gameDayEnd = GetGameDayEnd(gameDayStart);
+            
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -540,9 +570,10 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM TiltEvents 
-                WHERE Timestamp LIKE $date
+                WHERE Timestamp BETWEEN $start AND $end
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
+            command.Parameters.AddWithValue("$start", gameDayStart.ToString("o"));
+            command.Parameters.AddWithValue("$end", gameDayEnd.AddTicks(-1).ToString("o"));
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
@@ -631,6 +662,10 @@ namespace DeltaForceTracker.Database
 
         public int GetDailyCheaterCount(DateTime date)
         {
+            // Use game day boundaries (08:00-08:00)
+            var gameDayStart = GetGameDayStart(date);
+            var gameDayEnd = GetGameDayEnd(gameDayStart);
+            
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -638,9 +673,10 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM CheaterEvents 
-                WHERE Timestamp LIKE $date
+                WHERE Timestamp BETWEEN $start AND $end
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
+            command.Parameters.AddWithValue("$start", gameDayStart.ToString("o"));
+            command.Parameters.AddWithValue("$end", gameDayEnd.AddTicks(-1).ToString("o"));
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;
@@ -694,6 +730,10 @@ namespace DeltaForceTracker.Database
 
         public int GetDailyRedItemCount(DateTime date)
         {
+            // Use game day boundaries (08:00-08:00)
+            var gameDayStart = GetGameDayStart(date);
+            var gameDayEnd = GetGameDayEnd(gameDayStart);
+            
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -701,9 +741,10 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT COUNT(*) 
                 FROM RedItemEvents 
-                WHERE Timestamp LIKE $date
+                WHERE Timestamp BETWEEN $start AND $end
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
+            command.Parameters.AddWithValue("$start", gameDayStart.ToString("o"));
+            command.Parameters.AddWithValue("$end", gameDayEnd.AddTicks(-1).ToString("o"));
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToInt32(result) : 0;

@@ -33,6 +33,9 @@ namespace DeltaForceTracker
         private string _currentLanguage = "en";
         private Views.FloatingScanButton? _floatingButton;
         
+        // Chart toggle state
+        private bool _showAllScans = true; // Default: show all scans
+        
         // Achievement System
         private Services.AchievementService? _achievementService;
         private DateTime _appLaunchTime;
@@ -543,6 +546,27 @@ namespace DeltaForceTracker
         }
 
 
+        private void ChartToggleButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            // Toggle between "All Time" and "Last 50"
+            _showAllScans = !_showAllScans;
+            
+            // Update toggle text based on current state
+            if (_showAllScans)
+            {
+                // Currently showing all, next click will show last 50
+                ChartToggleText.Text = App.Instance.GetString("Lang.Analytics.ShowRecent");
+            }
+            else
+            {
+                // Currently showing last 50, next click will show all
+                ChartToggleText.Text = App.Instance.GetString("Lang.Analytics.ShowAll");
+            }
+            
+            // Refresh chart with new data
+            RefreshAnalytics();
+        }
+
         private void RefreshQuoteButton_Click(object sender, RoutedEventArgs e)
         {
             LoadRandomQuote(animate: true);
@@ -708,37 +732,22 @@ namespace DeltaForceTracker
             // Sort scans by timestamp to maintain chronological order
             var sortedScans = scans.OrderBy(s => s.Timestamp).ToList();
             
+            // Apply filter based on toggle state
+            if (!_showAllScans && sortedScans.Count > 50)
+            {
+                // Show only last 50 scans
+                sortedScans = sortedScans.Skip(sortedScans.Count - 50).ToList();
+            }
+            
             // Create index-based data points
             // X = scan index (0, 1, 2, 3...), Y = balance value
             var indexedData = sortedScans
                 .Select((scan, index) => new ObservablePoint(index, (double)scan.NumericValue))
                 .ToList();
 
-            // Adaptive sampling for very large datasets (100+ scans)
-            // Keep all data points for better accuracy, but adjust visual density
-            List<ObservablePoint> chartData;
-            int labelStep;
+            // Smart marker sizing: hide markers when displaying > 50 points
+            int geometrySize = sortedScans.Count > 50 ? 0 : 8;
             
-            if (sortedScans.Count <= 50)
-            {
-                // Small dataset: show all points, show every ~5th label
-                chartData = indexedData;
-                labelStep = Math.Max(1, sortedScans.Count / 10);
-            }
-            else if (sortedScans.Count <= 150)
-            {
-                // Medium dataset: show all points, show every ~10th label
-                chartData = indexedData;
-                labelStep = Math.Max(1, sortedScans.Count / 15);
-            }
-            else
-            {
-                // Large dataset: sample to ~100 points for performance
-                int step = sortedScans.Count / 100;
-                chartData = indexedData.Where((p, i) => i % step == 0).ToList();
-                labelStep = Math.Max(1, chartData.Count / 15);
-            }
-
             // Neon Cyan Color
             var neonCyan = SKColor.Parse("#00F0FF");
             var neonBlue = SKColor.Parse("#0F172A");
@@ -747,20 +756,20 @@ namespace DeltaForceTracker
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Values = chartData,
+                    Values = indexedData,
                     Fill = new SolidColorPaint(neonCyan.WithAlpha(30)), // Transparent fill
                     Stroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
-                    GeometrySize = sortedScans.Count <= 50 ? 8 : (sortedScans.Count <= 150 ? 6 : 4), // Smaller points for large datasets
-                    GeometryStroke = new SolidColorPaint(neonCyan) { StrokeThickness = 3 },
-                    GeometryFill = new SolidColorPaint(neonBlue),
+                    GeometrySize = geometrySize, // Hide markers when > 50 points
+                    GeometryStroke = geometrySize > 0 ? new SolidColorPaint(neonCyan) { StrokeThickness = 3 } : null,
+                    GeometryFill = geometrySize > 0 ? new SolidColorPaint(neonBlue) : null,
                     AnimationsSpeed = TimeSpan.FromMilliseconds(800), // Smooth drawing animation
-                    LineSmoothness = 0.3 // Slight smoothing for better visual flow
+                    LineSmoothness = 0.5 // Smoother curves for premium aesthetics
                 }
             };
 
             BalanceChart.Series = series;
             
-            // X-Axis: Scan indices with adaptive labeling
+            // X-Axis: Scan indices with adaptive labeling and zoom/pan
             BalanceChart.XAxes = new[]
             {
                 new Axis
@@ -783,7 +792,7 @@ namespace DeltaForceTracker
                 }
             };
             
-            // Y-Axis: Balance values (unchanged)
+            // Y-Axis: Balance values
             BalanceChart.YAxes = new[]
             {
                 new Axis
@@ -797,6 +806,9 @@ namespace DeltaForceTracker
                     SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(20))
                 }
             };
+            
+            // Enable Zoom and Pan on both axes
+            BalanceChart.ZoomMode = LiveChartsCore.Measure.ZoomAndPanMode.Both;
         }
 
         private List<ScanHistoryViewModel> CalculateDeltas(List<BalanceScan> scans)

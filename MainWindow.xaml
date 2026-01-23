@@ -265,7 +265,7 @@
                             <StackPanel Grid.Column="0">
                                 <Button x:Name="TiltButton"
                                         Content="{DynamicResource Lang.TiltButton}"
-                                        Style="{StaticResource TiltButton}"
+                                        Style="{StaticResource ModernButton}"
                                         Height="60"
                                         MinWidth="200"
                                         Click="TiltButton_Click"/>
@@ -284,7 +284,7 @@
                             <StackPanel Grid.Column="2">
                                 <Button x:Name="RedButton"
                                         Content="{DynamicResource Lang.Red}"
-                                        Style="{StaticResource ModernButton}"
+                                        Style="{StaticResource TiltButton}"
                                         Height="60"
                                         MinWidth="200"
                                         Click="RedButton_Click"/>
@@ -328,8 +328,24 @@
                         <!-- Chart -->
                         <Border Style="{StaticResource Card}" Height="350">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource Lang.BalanceHistory}" Style="{StaticResource LabelText}"/>
-                                <lvc:CartesianChart x:Name="BalanceChart" Height="280" Margin="0,10,0,0"/>
+                                <!-- Header with Toggle -->
+                                <Grid Margin="0,0,0,10">
+                                    <TextBlock Text="{DynamicResource Lang.BalanceHistory}" 
+                                               Style="{StaticResource LabelText}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ChartToggleButton"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               FontFamily="{StaticResource MainFont}"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               Cursor="Hand"
+                                               MouseLeftButtonUp="ChartToggleButton_Click">
+                                        <Run Text="◀"/><Run Text=" "/><Run x:Name="ChartToggleText" Text="{DynamicResource Lang.Analytics.ShowRecent}"/>
+                                    </TextBlock>
+                                </Grid>
+                                <lvc:CartesianChart x:Name="BalanceChart" Height="280" Margin="0,0,0,0"/>
                             </StackPanel>
                         </Border>
 
@@ -637,7 +653,7 @@
                     VerticalAlignment="Bottom"
                     Margin="0,0,15,8">
             <TextBlock x:Name="VersionLabel"
-                       Text="v2.1.0"
+                       Text="v2.2.0"
                        FontSize="10"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        Opacity="0.5"

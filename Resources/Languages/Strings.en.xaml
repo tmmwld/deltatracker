@@ -72,6 +72,10 @@
     <s:String x:Key="Lang.TotalReds">TOTAL REDS</s:String>
     <s:String x:Key="Lang.TotalTilts">TOTAL TILTS</s:String>
     
+    <!-- Chart Options -->
+    <s:String x:Key="Lang.Analytics.ShowAll">All Time</s:String>
+    <s:String x:Key="Lang.Analytics.ShowRecent">Last 50</s:String>
+    
     <!-- Achievements -->
     <s:String x:Key="Lang.Achievements">Achievements</s:String>
     <s:String x:Key="Lang.Achievement.Unlocked">Achievement Unlocked!</s:String>
