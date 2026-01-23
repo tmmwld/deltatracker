@@ -693,7 +693,7 @@
                 <Run Text="Made with "/>
                 <InlineUIContainer BaselineAlignment="Center">
                     <Image x:Name="HOAInlineSprite"
-                           Source="Resources/achievements/hoa.png"
+                           Source="Resources/achievements/hoa2.png"
                            Width="14"
                            Height="14"
                            Cursor="Hand"
