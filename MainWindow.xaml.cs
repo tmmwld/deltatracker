@@ -733,8 +733,8 @@ namespace DeltaForceTracker
 
         private void ZoomInButton_Click(object sender, MouseButtonEventArgs e)
         {
-            if (BalanceChart.XAxes == null || BalanceChart.XAxes.Length == 0) return;
-            var axis = BalanceChart.XAxes[0];
+            if (BalanceChart.XAxes == null || !BalanceChart.XAxes.Any()) return;
+            var axis = BalanceChart.XAxes.ElementAt(0);
 
             double currentMin = axis.MinLimit ?? 0;
             double currentMax = axis.MaxLimit ?? (BalanceChart.Series.FirstOrDefault()?.Values?.Cast<object>().Count() ?? 10) - 1;
@@ -752,8 +752,8 @@ namespace DeltaForceTracker
 
         private void ZoomOutButton_Click(object sender, MouseButtonEventArgs e)
         {
-            if (BalanceChart.XAxes == null || BalanceChart.XAxes.Length == 0) return;
-            var axis = BalanceChart.XAxes[0];
+            if (BalanceChart.XAxes == null || !BalanceChart.XAxes.Any()) return;
+            var axis = BalanceChart.XAxes.ElementAt(0);
 
             int totalCount = BalanceChart.Series.FirstOrDefault()?.Values?.Cast<object>().Count() ?? 0;
             if (totalCount == 0) return;
