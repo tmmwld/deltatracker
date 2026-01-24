@@ -728,6 +728,51 @@ namespace DeltaForceTracker
             UpdateChart(allScans);
         }
 
+        private double? _chartXMin = null;
+        private double? _chartXMax = null;
+
+        private void ZoomInButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (BalanceChart.XAxes == null || BalanceChart.XAxes.Length == 0) return;
+            var axis = BalanceChart.XAxes[0];
+
+            double currentMin = axis.MinLimit ?? 0;
+            double currentMax = axis.MaxLimit ?? (BalanceChart.Series.FirstOrDefault()?.Values?.Cast<object>().Count() ?? 10) - 1;
+            double range = currentMax - currentMin;
+
+            if (range <= 2) return; // Don't zoom in too much
+
+            // Zoom in by 30% from the right side (most recent)
+            axis.MinLimit = currentMax - (range * 0.7);
+            axis.MaxLimit = currentMax;
+
+            _chartXMin = axis.MinLimit;
+            _chartXMax = axis.MaxLimit;
+        }
+
+        private void ZoomOutButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (BalanceChart.XAxes == null || BalanceChart.XAxes.Length == 0) return;
+            var axis = BalanceChart.XAxes[0];
+
+            int totalCount = BalanceChart.Series.FirstOrDefault()?.Values?.Cast<object>().Count() ?? 0;
+            if (totalCount == 0) return;
+
+            double currentMin = axis.MinLimit ?? 0;
+            double currentMax = axis.MaxLimit ?? (totalCount - 1);
+            double range = currentMax - currentMin;
+
+            // Zoom out by 30%
+            double newMin = currentMax - (range / 0.7);
+            if (newMin < 0) newMin = 0;
+
+            axis.MinLimit = newMin;
+            axis.MaxLimit = totalCount - 1;
+
+            _chartXMin = axis.MinLimit;
+            _chartXMax = axis.MaxLimit;
+        }
+
         private void UpdateChart(List<BalanceScan> scans)
         {
             if (scans.Count == 0) return;
@@ -780,12 +825,14 @@ namespace DeltaForceTracker
                     Name = "Scan #",
                     NamePaint = new SolidColorPaint(SKColors.LightGray) { SKTypeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold) },
                     NameTextSize = 12,
+                    MinLimit = _chartXMin,
+                    MaxLimit = _chartXMax,
                     Labeler = value =>
                     {
                         int index = (int)value;
-                        // Show only first and last scan for clean visualization
-                        if (index == 0 || index == sortedScans.Count - 1)
-                            return $"#{index + 1}"; // Display as #1 and #N
+                        // Show only first and last scan for clean visualization OR boundaries if zoomed
+                        if (index == 0 || index == indexedData.Count - 1)
+                            return $"#{index + 1}"; 
                         return "";
                     },
                     LabelsPaint = new SolidColorPaint(SKColors.LightGray),
@@ -810,8 +857,10 @@ namespace DeltaForceTracker
                 }
             };
             
-            // Enable Zoom and Pan on both axes
-            BalanceChart.ZoomMode = LiveChartsCore.Measure.ZoomAndPanMode.Both;
+            // Disable default zoom/pan to avoid conflict with buttons if requested
+            // But we might want PANNING to still work.
+            // Setting to None disables mouse wheel.
+            BalanceChart.ZoomMode = LiveChartsCore.Measure.ZoomAndPanMode.None;
         }
 
         private List<ScanHistoryViewModel> CalculateDeltas(List<BalanceScan> scans)

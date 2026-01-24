@@ -363,17 +363,42 @@
                                     <TextBlock Text="{DynamicResource Lang.BalanceHistory}" 
                                                Style="{StaticResource LabelText}"
                                                VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="ChartToggleButton"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Center"
-                                               FontFamily="{StaticResource MainFont}"
-                                               FontSize="11"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource AccentBrush}"
-                                               Cursor="Hand"
-                                               MouseLeftButtonUp="ChartToggleButton_Click">
-                                        <Run Text="◀"/><Run Text=" "/><Run x:Name="ChartToggleText" Text="{DynamicResource Lang.Analytics.ShowRecent}"/>
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <!-- Zoom Out Button -->
+                                        <TextBlock x:Name="ZoomOutButton"
+                                                   Text="[ - ]"
+                                                   FontFamily="{StaticResource MainFont}"
+                                                   FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   Margin="0,0,8,0"
+                                                   Cursor="Hand"
+                                                   MouseLeftButtonUp="ZoomOutButton_Click"
+                                                   ToolTip="Zoom Out"/>
+
+                                        <!-- Zoom In Button -->
+                                        <TextBlock x:Name="ZoomInButton"
+                                                   Text="[ + ]"
+                                                   FontFamily="{StaticResource MainFont}"
+                                                   FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   Margin="0,0,15,0"
+                                                   Cursor="Hand"
+                                                   MouseLeftButtonUp="ZoomInButton_Click"
+                                                   ToolTip="Zoom In"/>
+
+                                        <TextBlock x:Name="ChartToggleButton"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource MainFont}"
+                                                   FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   Cursor="Hand"
+                                                   MouseLeftButtonUp="ChartToggleButton_Click">
+                                            <Run Text="◀"/><Run Text=" "/><Run x:Name="ChartToggleText" Text="{DynamicResource Lang.Analytics.ShowRecent}"/>
+                                        </TextBlock>
+                                    </StackPanel>
                                 </Grid>
                                 <lvc:CartesianChart x:Name="BalanceChart" Height="280" Margin="0,0,0,0"/>
                             </StackPanel>
@@ -701,7 +726,7 @@
                            ToolTip="❤️"
                            VerticalAlignment="Center"/>
                 </InlineUIContainer>
-                <Run Text=" to Delta Force game | v2.2.2"/>
+                <Run Text=" to Delta Force game | v2.2.3"/>
             </TextBlock>
             <TextBlock FontSize="10"
                        Opacity="0.5"
