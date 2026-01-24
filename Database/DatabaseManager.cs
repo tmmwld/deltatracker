@@ -148,7 +148,8 @@ namespace DeltaForceTracker.Database
 
         public void RecordScan(DateTime timestamp, string rawValue, decimal numericValue)
         {
-            var dailyStart = GetDailyStartingBalance(timestamp.Date);
+            var gameDayStart = GetGameDayStart(timestamp);
+            var dailyStart = GetDailyStartingBalance(gameDayStart);
             if (dailyStart == 0)
             {
                 dailyStart = numericValue;
@@ -184,8 +185,10 @@ namespace DeltaForceTracker.Database
         }
 
 
-        public decimal GetDailyStartingBalance(DateTime date)
+        public decimal GetDailyStartingBalance(DateTime gameDayStart)
         {
+            var gameDayEnd = GetGameDayEnd(gameDayStart);
+
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -193,11 +196,12 @@ namespace DeltaForceTracker.Database
             command.CommandText = @"
                 SELECT NumericValue 
                 FROM Scans 
-                WHERE Timestamp LIKE $date
+                WHERE Timestamp >= $start AND Timestamp < $end
                 ORDER BY Timestamp ASC
                 LIMIT 1
             ";
-            command.Parameters.AddWithValue("$date", date.ToString("yyyy-MM-dd") + "%");
+            command.Parameters.AddWithValue("$start", gameDayStart.ToString("o"));
+            command.Parameters.AddWithValue("$end", gameDayEnd.ToString("o"));
 
             var result = command.ExecuteScalar();
             return result != null ? Convert.ToDecimal(result) : 0;

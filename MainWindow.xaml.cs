@@ -649,8 +649,8 @@ namespace DeltaForceTracker
         private void RefreshDashboard()
         {
             var currentBalance = _dbManager.GetCurrentBalance();
-            var today = DateTime.Today;
-            var dailyStats = _dbManager.GetDailyStats(today);
+            var now = DateTime.Now;
+            var dailyStats = _dbManager.GetDailyStats(now);
 
             // Simple text update (count-up animation causes parsing issues)
             CurrentBalanceText.Text = ValueParser.FormatBalance(currentBalance);
@@ -672,9 +672,9 @@ namespace DeltaForceTracker
             }
 
             // Update today counters
-            var cheaters = _dbManager.GetDailyCheaterCount(today);
-            var tilts = _dbManager.GetDailyTiltCount(today);
-            var reds = _dbManager.GetDailyRedItemCount(today);
+            var cheaters = _dbManager.GetDailyCheaterCount(now);
+            var tilts = _dbManager.GetDailyTiltCount(now);
+            var reds = _dbManager.GetDailyRedItemCount(now);
             
             TodayCountersText.Text = $"Cheaters {cheaters} | Tilts {tilts} | Reds {reds}";
         }

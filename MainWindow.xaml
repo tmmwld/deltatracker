@@ -701,7 +701,7 @@
                            ToolTip="❤️"
                            VerticalAlignment="Center"/>
                 </InlineUIContainer>
-                <Run Text=" to Delta Force game | v2.2.1"/>
+                <Run Text=" to Delta Force game | v2.2.2"/>
             </TextBlock>
             <TextBlock FontSize="10"
                        Opacity="0.5"
